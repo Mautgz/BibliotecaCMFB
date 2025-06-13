@@ -1,0 +1,162 @@
+:root {
+    --color-principal: #01420B;
+}
+
+.navbar, .bg-primary, .btn-primary, .card.bg-primary, .sidebar {
+    background-color: var(--color-principal) !important;
+    border-color: var(--color-principal) !important;
+}
+
+.btn-primary, .card.bg-primary {
+    color: #fff !important;
+}
+
+a, .navbar-brand, .nav-link, .sidebar .nav-link {
+    color: #fff !important;
+}
+
+.btn-primary:hover, .navbar:hover, .card.bg-primary:hover {
+    background-color: #012d08 !important;
+    border-color: #012d08 !important;
+}
+
+.center{
+    transform-style: preserve-3d;
+    perspective: 200px;
+    width: 100px;
+    height: 40px;
+    box-shadow: 2px 2px 2px black;
+    margin: 3px;
+}
+input[type="checkbox"]{
+    position: relative;
+    width: 100px;
+    height: 40px;
+    outline: none;
+    transition: 0.5s;
+    margin: 0;
+    cursor: pointer;
+}
+.span{
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    transform-style: preserve-3d;
+    pointer-events: none;
+    color: #fff;
+}
+.span:nth-child(2){
+    left: 0;
+    background: #0a32e4;
+}
+.span:nth-child(2):before{
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(226, 27, 27), #e40505);
+    transform-origin: right;
+    transition: 1s;
+    backface-visibility: hidden;
+}
+input[type="checkbox"]:checked ~ .span:nth-child(2):before{
+    transform: rotateY(180deg);
+}
+.span:nth-child(3){
+    right: 0;
+    background: #f00;
+}
+.span:nth-child(3):before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #0986ec, rgb(7, 3, 245));
+    transform-origin: left;
+    transition: 1s;
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
+}
+
+input[type="checkbox"]:checked ~ .span:nth-child(3):before{
+    transform: rotateY(360deg);
+}
+
+/* Carousel Grid Styles */
+.products-area-wrapper {
+    width: 100%;
+    margin-top: 30px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    padding: 20px;
+}
+
+.products-header, .products-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 2fr 1fr 1fr 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.products-header {
+    font-weight: bold;
+    border-bottom: 2px solid #eee;
+    background: #f5f5f5;
+}
+
+.products-row {
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
+}
+.products-row:hover {
+    background: #f9f9f9;
+}
+
+.product-cell {
+    padding: 5px 0;
+    word-break: break-word;
+}
+
+.products-row:last-child {
+    border-bottom: none;
+}
+.app-content-carousel{
+    margin-left: 0px;}
+
+.app-content-headerText {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.app-content-headerButton {
+    margin-left: 20px;
+    padding: 8px 18px;
+    font-size: 1rem;
+    border-radius: 5px;
+    background: var(--color-principal);
+    color: #fff;
+    border: none;
+    transition: background 0.2s;
+}
+.app-content-headerButton:hover {
+    background: #012d08;
+}
+
+.search-input {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    width: 250px;
+    font-size: 1rem;
+}

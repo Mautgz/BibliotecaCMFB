@@ -1,0 +1,134 @@
+Pregunta: buenos días
+Esperada: ¡Hola! Soy Mister Biblio, tu asistente virtual. ¿Qué deseas hacer? 1️⃣ Buscar un libro (puedo recomendarte similares) 2️⃣ Consultar servicios de la biblioteca 3️⃣ Preguntar sobre los encargados o dudas generales
+Generada: La biblioteca abre de lunes a viernes de 9:00 a 18:30 y sábados de 9:00 a 14:00.
+Tiempo de respuesta: 2.41 segundos
+ROUGE-1: 0.113 | ROUGE-L: 0.075
+----------------------------------------
+Pregunta: ¿dónde están los libros nuevos?
+Esperada: Los libros nuevos se encuentran en la zona F2. A la derecha de la sección ESTE, hay una fila especialmente dedicada a ellos.
+Generada: estan en el estante mas alejado por la puerta al fondo de la biblioteca
+Tiempo de respuesta: 0.27 segundos
+ROUGE-1: 0.211 | ROUGE-L: 0.211
+----------------------------------------
+Pregunta: ¿cuál es el horario de la biblioteca?
+Esperada: La biblioteca está abierta de lunes a viernes de 8:00 a 20:00, y los sábados de 9:00 a 14:00.
+Generada: La biblioteca abre de lunes a viernes de 9:00 a 18:30 y sábados de 9:00 a 14:00.
+Tiempo de respuesta: 2.30 segundos
+ROUGE-1: 0.783 | ROUGE-L: 0.783
+----------------------------------------
+Pregunta: ¿me puedes recomendar libros similares a Problemas fundamentales de la filosofía?
+Esperada: Basado en 'Problemas fundamentales de la filosofía', te sugiero estos libros similares: La libertad creadora por Alejandro Korn, Las grandes culturas y su filosofía comparada por Dolores Riesco Díaz
+Generada: ¿Podrías mencionar el título del libro para el que quieres sugerencias similares?
+Tiempo de respuesta: 0.26 segundos
+ROUGE-1: 0.087 | ROUGE-L: 0.087
+----------------------------------------
+Pregunta: ¿dónde puedo encontrar libros de psicología?
+Esperada: Los libros de psicología se encuentran en la sección E1, B - ESTE, FILA 1, IZQUIERDA.
+Generada: estan en el estante mas alejado por la puerta al fondo de la biblioteca
+Tiempo de respuesta: 0.26 segundos
+ROUGE-1: 0.194 | ROUGE-L: 0.129
+----------------------------------------
+Pregunta: ¿dónde está la sala de lectura?
+Esperada: La sala de lectura se encuentra en el primer piso, a la derecha de la entrada principal.
+Generada: estan en el estante mas alejado por la puerta al fondo de la biblioteca
+Tiempo de respuesta: 0.26 segundos
+ROUGE-1: 0.323 | ROUGE-L: 0.323
+----------------------------------------
+Pregunta: ¿puedo renovar un préstamo?
+Esperada: Sí, puedes renovar tus préstamos hasta 2 veces, siempre que no haya reservas pendientes. La renovación puede hacerse en persona o por teléfono.
+Generada: ¡Por supuesto! ¿Quieres saber cómo renovar un préstamo o tienes alguna otra pregunta?
+Tiempo de respuesta: 26.93 segundos
+ROUGE-1: 0.244 | ROUGE-L: 0.195
+----------------------------------------
+Pregunta: ¿cómo puedo hacer una sugerencia?
+Esperada: Puedes hacer sugerencias en el buzón de sugerencias ubicado en la recepción o a través de nuestro formulario en línea.
+Generada: ¿Podrías mencionar el título del libro para el que quieres sugerencias similares?
+Tiempo de respuesta: 0.27 segundos
+ROUGE-1: 0.105 | ROUGE-L: 0.105
+----------------------------------------
+Pregunta: ¿dónde puedo estudiar en grupo?
+Esperada: Puedes estudiar en grupo en las salas de estudio ubicadas en el segundo piso. Estas salas deben reservarse con anticipación en la recepción.
+Generada: estan en el estante mas alejado por la puerta al fondo de la biblioteca
+Tiempo de respuesta: 0.26 segundos
+ROUGE-1: 0.205 | ROUGE-L: 0.154
+----------------------------------------
+Pregunta: ¿cómo puedo acceder al catálogo en línea?
+Esperada: Puedes acceder al catálogo en línea a través de nuestra página web. Necesitas tu carné de estudiante para acceder a todas las funciones.
+Generada: ¡Puedes acceder al catálogo en línea visitando nuestra página web en [sitio_web] o utilizando el aplicativo móvil que encontrarás en la App Store y Google Play.
+Tiempo de respuesta: 27.09 segundos
+ROUGE-1: 0.441 | ROUGE-L: 0.407
+----------------------------------------
+Pregunta: ¿tienen libros de literatura?
+Esperada: Sí, contamos con una extensa sección de literatura en la zona F5, a la izquierda de la sección ESTE.
+Generada: ¡Sí! Encontramos dos libros de literatura: "La libertad creadora" de Alejandro Korn y la "Sagrada Biblia. Versión directa de las lenguas originales" de Eloiínó Narac Fuster.
+Tiempo de respuesta: 26.19 segundos
+ROUGE-1: 0.327 | ROUGE-L: 0.286
+----------------------------------------
+Pregunta: ¿cómo puedo acceder a las revistas?
+Esperada: Las revistas están disponibles en la zona G2. Puedes consultarlas en sala o prestarlas por 7 días.
+Generada: Las revistas están ubicadas en la sección O de este módulo. Puedes encontrarlas a tu derecha, en la fila 2.
+Tiempo de respuesta: 22.79 segundos
+ROUGE-1: 0.429 | ROUGE-L: 0.381
+----------------------------------------
+Pregunta: ¿puedo usar el proyector?
+Esperada: Sí, contamos con proyectores disponibles en las salas de estudio grupal. Debes reservar la sala con anticipación.
+Generada: ¡Sí! Usted puede usar el proyector, se encuentra en la mesa de trabajo del fondo de la biblioteca.
+Tiempo de respuesta: 28.47 segundos
+ROUGE-1: 0.278 | ROUGE-L: 0.278
+----------------------------------------
+Pregunta: ¿tienen libros de sociología?
+Esperada: Sí, contamos con una sección de libros de sociología en la zona F7, a la izquierda de la sección ESTE.
+Generada: Sí, encontramos los siguientes libros de sociología:
+- "Acerca del estado" de Vladimir Il'ich Lenin (disponible)
+- "Psicología social" de Solomón E. Asch y Elías Mendelievich (disponible)
+Tiempo de respuesta: 26.80 segundos
+ROUGE-1: 0.340 | ROUGE-L: 0.302
+----------------------------------------
+Pregunta: ¿cómo puedo acceder a las tesis?
+Esperada: Las tesis están disponibles en la zona G3. Puedes consultarlas en sala o solicitar una copia digital.
+Generada: Puedes acceder a tesis en la sección de tesis disponibles en el nivel B del este, fila 1. Aquí encontrarás tesis como "Las grandes culturas y su filosofía comparada" o "El derecho de las naciones a la autodeterminación".
+Tiempo de respuesta: 29.27 segundos
+ROUGE-1: 0.333 | ROUGE-L: 0.167
+----------------------------------------
+Pregunta: ¿puedo usar el escáner?
+Esperada: Sí, contamos con escáneres disponibles en la sala de cómputo. El servicio es gratuito para estudiantes.
+Generada: ¡Sí! Puedes usar el escáner de la biblioteca. Está disponible en el área revisión de documentos, a tu derecha.
+Tiempo de respuesta: 27.40 segundos
+ROUGE-1: 0.359 | ROUGE-L: 0.256
+----------------------------------------
+Pregunta: ¿tienen libros de música?
+Esperada: Sí, contamos con una sección de libros de música en la zona E9, a la derecha de la sección ESTE.
+Generada: ¡Sí! Encuentramos los siguientes libros relacionados con la música: "La libertad en el arte" por Honor Arundel y la "Enciclopedia El Ateneo IV: Arte, música y espectáculos (Parte 2)". Ambos están disponibles.
+Tiempo de respuesta: 29.30 segundos
+ROUGE-1: 0.373 | ROUGE-L: 0.237
+----------------------------------------
+Pregunta: ¿puedo usar el piano?
+Esperada: Sí, contamos con un piano en la sala de música. Debes reservar la sala con anticipación.
+Generada: ¡Sí! Puedes encontrar información sobre cómo tocar el piano en las enciclopedias "Arte, música y espectáculos (Partes 1 y 2)" en E1, A - Oeste, Fila 4, Derecha.
+Tiempo de respuesta: 28.57 segundos
+ROUGE-1: 0.245 | ROUGE-L: 0.204
+----------------------------------------
+Pregunta: ¿cómo puedo acceder a las partituras?
+Esperada: Las partituras están disponibles en la zona G5. Puedes consultarlas en sala o prestarlas por 7 días.
+Generada: Las partituras se encuentran en la sección Música del nivel A. Tú encontrarás el libro "Método de solfeo" y "Partituras clásicas para guitarra".
+Tiempo de respuesta: 29.34 segundos
+ROUGE-1: 0.213 | ROUGE-L: 0.170
+----------------------------------------
+Pregunta: ¿puedo usar el estudio de grabación?
+Esperada: Sí, contamos con un estudio de grabación. Debes reservarlo con anticipación y tener un proyecto aprobado.
+Generada: ¡Claro! Si deseas saber cómo usar la sala de estudio individual o grupal, puedes encontrarla en el piso superior derecho de la biblioteca. Allí podrás trabajar sin interrupciones y tomar ventaja de nuestro acceso a internet para investigación. ¿Te ayudo más?
+Tiempo de respuesta: 28.56 segundos
+ROUGE-1: 0.159 | ROUGE-L: 0.095
+----------------------------------------
+Pregunta: ¿tienen libros de cine?
+Esperada: Sí, contamos con una sección de libros de cine en la zona F10, a la izquierda de la sección ESTE.
+Generada: Si estás buscando sobre cine en nuestra colección, te recomendamos "Panorama, Colección de Enciclopedias Monográficas Tomo 1 - Libros en el Tiempo" y "La Libertad Creadora", de Alejandro Korn. Este último incluye una sección sobre cine.
+Tiempo de respuesta: 25.28 segundos
+ROUGE-1: 0.387 | ROUGE-L: 0.290
+----------------------------------------
+Pregunta: ¿cómo puedo acceder a las películas?
+Esperada: Las películas están disponibles en la zona G6. Puedes verlas en sala o prestarlas por 3 días.
+Generada: Las películas no se encuentran en la biblioteca. Puedes encontrarlas en una tienda de alquiler o streaming online.
+Tiempo de respuesta: 24.30 segundos
+ROUGE-1: 0.410 | ROUGE-L: 0.410
+----------------------------------------
