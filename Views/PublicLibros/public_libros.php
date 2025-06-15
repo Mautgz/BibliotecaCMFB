@@ -681,11 +681,18 @@
             function addMessage(content, isUser = false) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+                
                 const messageContent = document.createElement('div');
                 messageContent.className = 'message-content';
-                messageContent.textContent = content;
+                
+                // Procesar el contenido para manejar saltos de línea
+                const formattedContent = content.replace(/\n/g, '<br>');
+                messageContent.innerHTML = formattedContent;
+                
                 messageDiv.appendChild(messageContent);
                 chatMessages.appendChild(messageDiv);
+                
+                // Hacer scroll al final del chat
                 chatMessages.scrollTop = chatMessages.scrollHeight;
                 checkChatOverflow();
             }
@@ -715,29 +722,65 @@
                 e.preventDefault();
                 const consulta = userInput.value.trim();
                 if (!consulta) return;
+                
+                // Mostrar mensaje del usuario
                 addMessage(consulta, true);
                 userInput.value = '';
                 chatbotLoader.style.display = 'block';
+
                 try {
-                    const respuesta = await fetch(base_url + 'Chatbot/obtenerRespuesta', {
+                    const response = await fetch(base_url + 'Chatbot/obtenerRespuesta', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Accept': 'application/json'
+                        },
                         body: 'query=' + encodeURIComponent(consulta)
                     });
-                    const output = await respuesta.text();
-                    const lineas = output.split("\n");
-                    const lineaJSON = lineas.find(linea =>
-                        linea.trim().startsWith("{") && linea.trim().endsWith("}")
-                    );
-                    if (!lineaJSON) throw new Error("No se encontró una línea JSON válida en la salida.");
-                    const datos = JSON.parse(lineaJSON);
-                    addMessage(datos.respuesta);
-                    if (datos.libros && datos.libros.length > 0) {
-                        addBookSuggestions(datos.libros);
+
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta del servidor');
                     }
+
+                    const data = await response.json();
+                    
+                    // Mostrar la respuesta del bot
+                    if (data.respuesta) {
+                        addMessage(data.respuesta);
+                    }
+
+                    // Mostrar sugerencias de libros si existen
+                    if (data.libros && data.libros.length > 0) {
+                        const suggestionsDiv = document.createElement('div');
+                        suggestionsDiv.className = 'message bot-message';
+                        const contentDiv = document.createElement('div');
+                        contentDiv.className = 'message-content';
+
+                        data.libros.forEach(book => {
+                            const bookDiv = document.createElement('div');
+                            bookDiv.className = 'book-suggestion';
+                            bookDiv.innerHTML = `
+                                <h6>${book.titulo || 'Sin título'}</h6>
+                                <p><strong>Autor:</strong> ${book.autor_personal || 'No especificado'}</p>
+                                <p><strong>Editorial:</strong> ${book.editorial || 'No especificada'}</p>
+                                <p><strong>Materia:</strong> ${book.materia || 'No especificada'}</p>
+                                <p><strong>Ubicación:</strong> ${book.ubicacion || 'No especificada'}</p>
+                                <p><strong>Estado:</strong> ${book.estado || 'No especificado'}</p>
+                            `;
+                            contentDiv.appendChild(bookDiv);
+                        });
+
+                        suggestionsDiv.appendChild(contentDiv);
+                        chatMessages.appendChild(suggestionsDiv);
+                    }
+
+                    // Hacer scroll al final del chat
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    checkChatOverflow();
+
                 } catch (error) {
-                    console.error("Error al procesar la respuesta del script Python:", error);
-                    addMessage("Ocurrió un error al procesar tu consulta.");
+                    console.error('Error:', error);
+                    addMessage('Lo siento, ha ocurrido un error al procesar tu consulta. Por favor, intenta de nuevo.');
                 } finally {
                     chatbotLoader.style.display = 'none';
                 }

@@ -12,6 +12,10 @@ from bs4 import BeautifulSoup
 import time
 import mysql.connector
 from datetime import datetime
+import numpy as np
+from sklearn.preprocessing import normalize
+import pickle
+from collections import defaultdict
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # Necesario para usar sesiones
@@ -21,8 +25,12 @@ db_config = {
     'host': 'localhost',
     'user': 'root',
     'password': '',
-    'database': 'biblio'
+    'database': 'biblioteca'
 }
+
+# Configuración de caché
+CACHE_DIR = os.path.join(os.path.dirname(__file__), 'cache')
+os.makedirs(CACHE_DIR, exist_ok=True)
 
 def registrar_log(query, respuesta, tiempo_respuesta):
     try:
@@ -99,10 +107,15 @@ def es_consulta_detalles_libro(texto):
 
 def buscar_info_libro_web(titulo, autor):
     try:
-        # Buscar en Google Books API
+        # Limpiar y preparar la consulta
         query = f"{titulo} {autor}"
-        url = f"https://www.googleapis.com/books/v1/volumes?q={requests.utils.quote(query)}"
-        response = requests.get(url)
+        query = query.replace(' ', '+')
+        
+        # Buscar en Google Books API
+        url = f"https://www.googleapis.com/books/v1/volumes?q={query}&langRestrict=es"
+        print(f"[DEBUG] Buscando en Google Books: {url}")
+        
+        response = requests.get(url, timeout=10)
         if response.status_code == 200:
             data = response.json()
             if 'items' in data and len(data['items']) > 0:
@@ -110,10 +123,17 @@ def buscar_info_libro_web(titulo, autor):
                 libro = data['items'][0]['volumeInfo']
                 descripcion = libro.get('description', '')
                 if descripcion:
+                    print(f"[DEBUG] Encontrada descripción en Google Books: {descripcion[:100]}...")
                     return descripcion[:1000]  # Limitar a 1000 caracteres
+                else:
+                    print("[DEBUG] No se encontró descripción en el resultado de Google Books")
+            else:
+                print("[DEBUG] No se encontraron resultados en Google Books")
+        else:
+            print(f"[DEBUG] Error en la respuesta de Google Books: {response.status_code}")
         return None
     except Exception as e:
-        print(f"Error al buscar información del libro en Google Books: {str(e)}")
+        print(f"[DEBUG] Error al buscar información del libro en Google Books: {str(e)}")
         return None
 
 def generar_resumen_libro(titulo, autor, info_web):
@@ -124,6 +144,13 @@ Autor: {autor}
 
 Información encontrada:
 {info_web}
+
+Instrucciones:
+1. Si no hay suficiente información, indica que no se puede generar un resumen detallado.
+2. No inventes información que no esté en los datos proporcionados.
+3. Mantén el resumen objetivo y basado en hechos.
+4. Si el libro es filosófico o teórico, enfócate en sus principales conceptos.
+5. Si el libro es histórico o social, destaca su contexto y relevancia.
 """
     try:
         print("[DEBUG] Enviando prompt a Mistral/Ollama:", prompt[:300])
@@ -132,7 +159,8 @@ Información encontrada:
                                    "model": "mistral",
                                    "prompt": prompt,
                                    "stream": False,
-                                   "max_tokens": 80
+                                   "max_tokens": 150,
+                                   "temperature": 0.3
                                })
         print("[DEBUG] Status code de Ollama:", response.status_code)
         if response.status_code == 200:
@@ -570,9 +598,13 @@ def es_pregunta_resumen(texto):
         r"quiero saber sobre",
         r"quiero saber de",
         r"quiero saber qu[ée] es",
-        r"quiero saber de qu[ée] trata"
+        r"quiero saber de qu[ée] trata",
+        r"contenido",
+        r"temas",
+        r"argumento",
+        r"trama"
     ]
-    texto = texto.lower()
+    texto = texto.lower().strip()
     resultado = any(re.search(patron, texto) for patron in patrones)
     print(f"[DEBUG] es_pregunta_resumen('{texto}') = {resultado}")
     return resultado
@@ -667,6 +699,78 @@ def generar_respuesta_prestamos():
         "libros": []
     }
 
+# Función para cargar o generar embeddings en caché
+def get_cached_embeddings(books, force_reload=False):
+    cache_file = os.path.join(CACHE_DIR, 'book_embeddings.pkl')
+    
+    if not force_reload and os.path.exists(cache_file):
+        try:
+            with open(cache_file, 'rb') as f:
+                return pickle.load(f)
+        except Exception as e:
+            print(f"Error al cargar caché: {str(e)}")
+    
+    print("Generando embeddings para libros...")
+    book_texts = [prepare_book_text(book) for book in books]
+    embeddings = sentence_model.encode(book_texts, show_progress_bar=True)
+    embeddings = normalize(embeddings)
+    
+    try:
+        with open(cache_file, 'wb') as f:
+            pickle.dump(embeddings, f)
+    except Exception as e:
+        print(f"Error al guardar caché: {str(e)}")
+    
+    return embeddings
+
+# Función para búsqueda eficiente
+def search_books_efficient(query, books, embeddings, top_k=5):
+    query_norm = normalize_text(query)
+    query_embedding = sentence_model.encode([query_norm])[0]
+    query_embedding = normalize(query_embedding.reshape(1, -1))
+    
+    similarities = np.dot(embeddings, query_embedding.T).flatten()
+    top_indices = np.argpartition(similarities, -top_k)[-top_k:]
+    top_indices = top_indices[np.argsort(-similarities[top_indices])]
+    
+    results = []
+    for idx in top_indices:
+        if similarities[idx] > 0.3:
+            book = books[idx].copy()
+            book['similarity'] = float(similarities[idx])
+            results.append(book)
+    
+    return results
+
+# Función para búsqueda por palabras clave optimizada
+def search_by_keywords_efficient(query, books):
+    keyword_index = defaultdict(list)
+    for i, book in enumerate(books):
+        text = prepare_book_text(book).lower()
+        words = set(text.split())
+        for word in words:
+            if len(word) > 3:
+                keyword_index[word].append(i)
+    
+    query_words = set(normalize_text(query).split())
+    matching_indices = set()
+    
+    for word in query_words:
+        if len(word) > 3 and word in keyword_index:
+            matching_indices.update(keyword_index[word])
+    
+    results = []
+    for idx in matching_indices:
+        book = books[idx].copy()
+        book_text = prepare_book_text(book).lower()
+        score = sum(1 for word in query_words if word in book_text)
+        if score > 0:
+            book['score'] = score
+            results.append(book)
+    
+    results.sort(key=lambda x: x['score'], reverse=True)
+    return results[:5]
+
 @app.route('/')
 def home():
     return "Servidor Flask funcionando 🎉"
@@ -678,355 +782,95 @@ def buscar_libros():
         data = request.get_json()
         query = data.get('query', '').strip().lower()
         books = data.get('books', [])
-        print(f"[DEBUG] Recibido query: {query}")
-        print(f"[DEBUG] Recibidos {len(books)} libros")
-
-        # 1. FAQ - Check this BEFORE any other processing
-        faq = buscar_faq_por_regex(query)
-        if faq:
-            print(f"[DEBUG] FAQ encontrada: {faq['pregunta']}")
-            respuesta = faq['respuesta']
-            tiempo_respuesta = time.time() - tiempo_inicio
-            registrar_log(query, respuesta, tiempo_respuesta)
-            return jsonify({
-                "respuesta": respuesta,
-                "libros": []
-            })
-
-        # 2. Si es una consulta de préstamos
-        if es_consulta_prestamos(query):
-            respuesta = generar_respuesta_prestamos()
-            tiempo_respuesta = time.time() - tiempo_inicio
-            registrar_log(query, respuesta["respuesta"], tiempo_respuesta)
-            return jsonify(respuesta)
-
-        # 2. Si es una consulta de sugerencias
-        if es_consulta_sugerencias(query):
-            # Buscar el último libro mencionado
-            libro_actual = None
-            for book in books:
-                if book.get('titulo', '').lower() in query.lower():
-                    libro_actual = book
-                    break
-            
-            if libro_actual:
-                similares = buscar_libros_similares(libro_actual, books)
-                if similares:
-                    respuesta = f"Basado en '{libro_actual.get('titulo', '')}', te sugiero estos libros similares:\n\n"
-                    for libro in similares:
-                        respuesta += f"- {libro.get('titulo', '')} por {libro.get('autor_personal', '')}\n"
-                        respuesta += f"  Materia: {libro.get('materia', '')}\n"
-                        respuesta += f"  Ubicación: {libro.get('ubicacion', '')}\n\n"
-                    tiempo_respuesta = time.time() - tiempo_inicio
-                    registrar_log(query, respuesta, tiempo_respuesta)
-                    return jsonify({
-                        "respuesta": respuesta,
-                        "libros": similares
-                    })
-                else:
-                    tiempo_respuesta = time.time() - tiempo_inicio
-                    registrar_log(query, f"Lo siento, no encontré libros similares a '{libro_actual.get('titulo', '')}'. ¿Te gustaría buscar por otro criterio?", tiempo_respuesta)
-                    return jsonify({
-                        "respuesta": f"Lo siento, no encontré libros similares a '{libro_actual.get('titulo', '')}'. ¿Te gustaría buscar por otro criterio?",
-                        "libros": []
-                    })
-            else:
-                tiempo_respuesta = time.time() - tiempo_inicio
-                registrar_log(query, "¿Podrías mencionar el título del libro para el que quieres sugerencias similares?", tiempo_respuesta)
-                return jsonify({
-                    "respuesta": "¿Podrías mencionar el título del libro para el que quieres sugerencias similares?",
-                    "libros": []
-                })
-
-        # Si es una pregunta sobre el resumen de un libro
+        
+        # Verificar si es una pregunta sobre el resumen de un libro
         if es_pregunta_resumen(query):
             libro_encontrado = buscar_libro_por_titulo_parcial(query, books)
-            
             if libro_encontrado:
-                # Normalizar el estado del libro
                 libro_encontrado = obtener_detalles_libro(libro_encontrado)
-                descripcion = libro_encontrado.get('descripcion', '').strip()
-                if descripcion:
-                    resumen = generar_resumen_libro(libro_encontrado.get('titulo', ''), libro_encontrado.get('autor_personal', ''), descripcion)
-                    if resumen:
-                        tiempo_respuesta = time.time() - tiempo_inicio
-                        registrar_log(query, resumen, tiempo_respuesta)
-                        return jsonify({
-                            'respuesta': f"{resumen}",
-                            'libros': [libro_encontrado]
-                        })
-                    else:
-                        tiempo_respuesta = time.time() - tiempo_inicio
-                        registrar_log(query, f"El libro '{libro_encontrado['titulo']}' trata sobre: {descripcion}", tiempo_respuesta)
-                        return jsonify({
-                            'respuesta': f"El libro '{libro_encontrado['titulo']}' trata sobre: {descripcion}",
-                            'libros': [libro_encontrado]
-                        })
+                
+                # Primero intentar obtener información de Google Books
                 info_web = buscar_info_libro_web(
                     libro_encontrado.get('titulo', ''),
                     libro_encontrado.get('autor_personal', '')
                 )
+                
                 if info_web:
-                    resumen = generar_resumen_libro(libro_encontrado.get('titulo', ''), libro_encontrado.get('autor_personal', ''), info_web)
+                    print("[DEBUG] Usando información de Google Books para generar resumen")
+                    resumen = generar_resumen_libro(
+                        libro_encontrado.get('titulo', ''),
+                        libro_encontrado.get('autor_personal', ''),
+                        info_web
+                    )
                     if resumen:
                         tiempo_respuesta = time.time() - tiempo_inicio
                         registrar_log(query, resumen, tiempo_respuesta)
                         return jsonify({
-                            'respuesta': f"{resumen}",
+                            'respuesta': resumen,
                             'libros': [libro_encontrado]
                         })
-                    else:
+                
+                # Si no hay información web, intentar con la descripción local
+                descripcion = libro_encontrado.get('descripcion', '').strip()
+                if descripcion:
+                    print("[DEBUG] Usando descripción local para generar resumen")
+                    resumen = generar_resumen_libro(
+                        libro_encontrado.get('titulo', ''),
+                        libro_encontrado.get('autor_personal', ''),
+                        descripcion
+                    )
+                    if resumen:
                         tiempo_respuesta = time.time() - tiempo_inicio
-                        registrar_log(query, f"El libro '{libro_encontrado['titulo']}' trata sobre: {info_web}", tiempo_respuesta)
+                        registrar_log(query, resumen, tiempo_respuesta)
                         return jsonify({
-                            'respuesta': f"El libro '{libro_encontrado['titulo']}' trata sobre: {info_web}",
+                            'respuesta': resumen,
                             'libros': [libro_encontrado]
                         })
-                datos = f"Título: {libro_encontrado.get('titulo', 'Desconocido')}\n"
-                datos += f"Autor: {libro_encontrado.get('autor_personal', 'No especificado')}\n"
-                datos += f"Editorial: {libro_encontrado.get('editorial', 'No especificada')}\n"
-                datos += f"Materia: {libro_encontrado.get('materia', 'No especificada')}\n"
-                datos += f"Código: {libro_encontrado.get('codigo_libro', 'No especificado')}\n"
-                datos += f"Ubicación: {libro_encontrado.get('ubicacion', 'No especificada')}\n"
-                datos += f"Estado: {libro_encontrado.get('estado', 'No especificado')}"
-                tiempo_respuesta = time.time() - tiempo_inicio
-                registrar_log(query, f"No tengo un resumen disponible para este libro, pero aquí tienes sus datos principales:\n{datos}", tiempo_respuesta)
+                
+                # Si no hay resumen, devolver información básica
                 return jsonify({
-                    'respuesta': f"No tengo un resumen disponible para este libro, pero aquí tienes sus datos principales:\n{datos}",
+                    'respuesta': f"Lo siento, no puedo generar un resumen detallado para '{libro_encontrado.get('titulo', '')}'. Sin embargo, puedo decirte que es un libro de {libro_encontrado.get('materia', '')} escrito por {libro_encontrado.get('autor_personal', '')}.",
                     'libros': [libro_encontrado]
                 })
-            else:
-                tiempo_respuesta = time.time() - tiempo_inicio
-                registrar_log(query, "No encontré el libro mencionado en tu consulta.", tiempo_respuesta)
-                return jsonify({
-                    'respuesta': "No encontré el libro mencionado en tu consulta.",
-                    'libros': []
-                })
-
-        # Verificar si Ollama está disponible
-        try:
-            requests.get('http://localhost:11434/api/generate', timeout=60)
-        except:
-            print("Ollama no está disponible, usando respuestas predefinidas")
-            # Si Ollama no está disponible, usar respuestas predefinidas
-            if es_busqueda_por_tema(query):
-                libros_clave = buscar_por_palabras_clave(query, books)
-                if libros_clave:
-                    libros_actualizados = [obtener_detalles_libro(libro) for libro in libros_clave]
-                    tiempo_respuesta = time.time() - tiempo_inicio
-                    registrar_log(query, f"He encontrado estos libros que podrían interesarte: {', '.join([libro['titulo'] for libro in libros_actualizados])}", tiempo_respuesta)
-                    return jsonify({
-                        "respuesta": f"He encontrado estos libros que podrían interesarte: {', '.join([libro['titulo'] for libro in libros_actualizados])}",
-                        "libros": libros_actualizados
-                    })
+        
+        # Cargar embeddings desde caché
+        embeddings = get_cached_embeddings(books)
+        
+        # Realizar búsqueda semántica
+        semantic_results = search_books_efficient(query, books, embeddings, top_k=1)  # Cambiado a 1 resultado
+        
+        if semantic_results:
+            libro_actualizado = obtener_detalles_libro(semantic_results[0])  # Solo tomamos el primer resultado
             tiempo_respuesta = time.time() - tiempo_inicio
-            registrar_log(query, "Lo siento, no encontré libros que coincidan con tu búsqueda. ¿Podrías ser más específico?", tiempo_respuesta)
-            return jsonify({
-                "respuesta": "Lo siento, no encontré libros que coincidan con tu búsqueda. ¿Podrías ser más específico?",
-                "libros": []
-            })
-
-        # 1. Si es una consulta sobre horarios
-        if es_consulta_horarios(query):
-            tiempo_respuesta = time.time() - tiempo_inicio
-            registrar_log(query, "Consulta sobre horarios", tiempo_respuesta)
-            respuesta = obtener_info_horarios()
-            tiempo_respuesta = time.time() - tiempo_inicio
-            registrar_log(query, respuesta["respuesta"], tiempo_respuesta)
-            return jsonify(respuesta)
-
-        # 2. Si es una pregunta personal
-        if es_pregunta_personal(query):
-            tiempo_respuesta = time.time() - tiempo_inicio
-            registrar_log(query, "Pregunta personal", tiempo_respuesta)
-            respuesta = obtener_respuesta_personal()
-            tiempo_respuesta = time.time() - tiempo_inicio
-            registrar_log(query, respuesta["respuesta"], tiempo_respuesta)
-            return jsonify(respuesta)
-
-        # 3. Si es una consulta sobre servicios
-        if es_consulta_servicios(query):
-            tiempo_respuesta = time.time() - tiempo_inicio
-            registrar_log(query, "Consulta sobre servicios", tiempo_respuesta)
-            prompt = f"""Usuario: {query}
-
-Asistente: ¡Con gusto te informo sobre los servicios que ofrecemos en nuestra biblioteca! Tenemos:
-
-- Préstamo de libros para llevar a casa
-- Sala de lectura con ambiente tranquilo
-- Acceso a internet para investigación
-- Área de estudio individual y grupal
-- Consulta de material bibliográfico
-- Servicio de fotocopias
-- Asesoría personalizada en búsqueda de información
-
-¿Te gustaría que te explique más detalles sobre alguno de estos servicios? Estoy aquí para ayudarte a aprovechar al máximo todos nuestros recursos."""
             
-            respuesta_llm = generar_respuesta_ollama(prompt)
-            if respuesta_llm:
-                tiempo_respuesta = time.time() - tiempo_inicio
-                registrar_log(query, respuesta_llm, tiempo_respuesta)
-                return jsonify({
-                    "respuesta": respuesta_llm,
-                    "libros": []
-                })
-            else:
-                tiempo_respuesta = time.time() - tiempo_inicio
-                registrar_log(query, "¡Con gusto te informo sobre los servicios que ofrecemos en nuestra biblioteca! Tenemos préstamo de libros, sala de lectura, acceso a internet, área de estudio, consulta de material bibliográfico, servicio de fotocopias y asesoría en búsqueda de información. ¿Te gustaría que te explique más detalles sobre alguno de estos servicios?", tiempo_respuesta)
-                return jsonify({
-                    "respuesta": "¡Con gusto te informo sobre los servicios que ofrecemos en nuestra biblioteca! Tenemos préstamo de libros, sala de lectura, acceso a internet, área de estudio, consulta de material bibliográfico, servicio de fotocopias y asesoría en búsqueda de información. ¿Te gustaría que te explique más detalles sobre alguno de estos servicios?",
-                    "libros": []
-                })
-
-        # 5. Si es una búsqueda por tema
-        if es_busqueda_por_tema(query):
-            # Primero intentar búsqueda semántica
-            tiempo_inicio_busqueda = time.time()
-            query_norm = normalize_text(query)
-            book_texts = [prepare_book_text(book) for book in books]
-            query_embedding = sentence_model.encode([query_norm])[0]
-            book_embeddings = sentence_model.encode(book_texts)
-            similarities = cosine_similarity([query_embedding], book_embeddings)[0]
-            similar_indices = similarities.argsort()[-5:][::-1]
-            relevant_books = []
-            for idx in similar_indices:
-                similarity = similarities[idx]
-                if similarity > 0.3:
-                    book = books[idx].copy()
-                    libro_actualizado = obtener_detalles_libro(book)
-                    libro_actualizado['similarity'] = float(similarity)
-                    libro_actualizado['codigo_libro'] = libro_actualizado.get('codigo_libro', 'No especificado')
-                    libro_actualizado['ubicacion'] = libro_actualizado.get('ubicacion', 'No especificada')
-                    relevant_books.append(libro_actualizado)
-            
-            if relevant_books:
-                tiempo_respuesta = time.time() - tiempo_inicio_busqueda
-                registrar_log(query, f"He encontrado estos libros que podrían interesarte: {', '.join([libro['titulo'] for libro in relevant_books])}", tiempo_respuesta)
-                respuesta_llm = generar_respuesta_ollama(query, libros_encontrados=relevant_books)
-                tiempo_respuesta = time.time() - tiempo_inicio
-                registrar_log(query, respuesta_llm, tiempo_respuesta)
-                return jsonify({
-                    "respuesta": respuesta_llm if respuesta_llm else f"He encontrado estos libros que podrían interesarte: {', '.join([libro['titulo'] for libro in relevant_books])}",
-                    "libros": relevant_books
-                })
-            else:
-                # Si no hay resultados semánticos, intentar búsqueda por palabras clave
-                tiempo_inicio_clave = time.time()
-                libros_clave = buscar_por_palabras_clave(query, books)
-                if libros_clave:
-                    libros_actualizados = [obtener_detalles_libro(libro) for libro in libros_clave]
-                    tiempo_respuesta = time.time() - tiempo_inicio_clave
-                    registrar_log(query, f"He encontrado estos libros que podrían interesarte: {', '.join([libro['titulo'] for libro in libros_actualizados])}", tiempo_respuesta)
-                    respuesta_llm = generar_respuesta_ollama(query, libros_encontrados=libros_actualizados)
-                    tiempo_respuesta = time.time() - tiempo_inicio
-                    registrar_log(query, respuesta_llm, tiempo_respuesta)
-                    return jsonify({
-                        "respuesta": respuesta_llm if respuesta_llm else f"He encontrado estos libros que podrían interesarte: {', '.join([libro['titulo'] for libro in libros_actualizados])}",
-                        "libros": libros_actualizados
-                    })
-
-        # 6. Si es una búsqueda por palabra clave
-        if es_busqueda_por_palabra_clave(query):
-            tiempo_inicio_clave = time.time()
-            libros_clave = buscar_por_palabras_clave(query, books)
-            if libros_clave:
-                libros_actualizados = [obtener_detalles_libro(libro) for libro in libros_clave]
-                tiempo_respuesta = time.time() - tiempo_inicio_clave
-                registrar_log(query, f"He encontrado estos libros que podrían interesarte: {', '.join([libro['titulo'] for libro in libros_actualizados])}", tiempo_respuesta)
-                respuesta_llm = generar_respuesta_ollama(query, libros_encontrados=libros_actualizados)
-                tiempo_respuesta = time.time() - tiempo_inicio
-                registrar_log(query, respuesta_llm, tiempo_respuesta)
-                return jsonify({
-                    "respuesta": respuesta_llm if respuesta_llm else f"He encontrado estos libros que podrían interesarte: {', '.join([libro['titulo'] for libro in libros_actualizados])}",
-                    "libros": libros_actualizados
-                })
-
-        # 7. Si coincide con un patrón regex de FAQ
-        faq = buscar_faq_por_regex(query)
-        if faq:
-            tiempo_inicio_faq = time.time()
-            prompt = f"""Usuario: {query}
-
-Asistente: {faq['respuesta']}
-
-¿Hay algo más en lo que pueda ayudarte? Estoy aquí para resolver cualquier otra duda que tengas sobre nuestra biblioteca."""
-            
-            respuesta_llm = generar_respuesta_ollama(prompt)
-            tiempo_respuesta = time.time() - tiempo_inicio_faq
-            registrar_log(query, respuesta_llm, tiempo_respuesta)
-            return jsonify({"respuesta": respuesta_llm if respuesta_llm else faq['respuesta'], "libros": []})
-
-        # 8. Si es una consulta general de búsqueda, pide más detalles
-        if es_consulta_general_busqueda(query):
-            tiempo_inicio_general = time.time()
-            prompt = f"""Usuario: {query}
-
-Asistente: ¡Claro! Estoy aquí para ayudarte a encontrar el libro que necesitas. ¿Podrías decirme si buscas un libro por título, autor o tema en particular? Esto me ayudará a darte una mejor recomendación."""
-            
-            respuesta_llm = generar_respuesta_ollama(prompt)
-            tiempo_respuesta = time.time() - tiempo_inicio_general
-            registrar_log(query, respuesta_llm, tiempo_respuesta)
-            return jsonify({
-                "respuesta": respuesta_llm if respuesta_llm else "¡Claro! ¿Sobre qué tema, autor o título te gustaría buscar un libro?",
-                "libros": []
-            })
-
-        # 9. Si coincide con un libro exacto
-        libro_encontrado = buscar_por_titulo(query, books)
-        if libro_encontrado:
-            libro_actualizado = obtener_detalles_libro(libro_encontrado)
-            tiempo_respuesta = time.time() - tiempo_inicio
-            registrar_log(query, f"He encontrado este libro que podría interesarte: {libro_actualizado.get('titulo', '')}", tiempo_respuesta)
             respuesta_llm = generar_respuesta_ollama(query, libros_encontrados=[libro_actualizado])
-            tiempo_respuesta = time.time() - tiempo_inicio
-            registrar_log(query, respuesta_llm, tiempo_respuesta)
+            
             return jsonify({
-                "respuesta": respuesta_llm if respuesta_llm else f"He encontrado este libro que podría interesarte: {libro_actualizado.get('titulo', '')}",
+                "respuesta": respuesta_llm if respuesta_llm else f"He encontrado este libro que podría interesarte: {libro_actualizado['titulo']}",
+                "libros": [libro_actualizado]
+            })
+        
+        # Si no hay resultados semánticos, intentar búsqueda por palabras clave
+        keyword_results = search_by_keywords_efficient(query, books)
+        
+        if keyword_results:
+            libro_actualizado = obtener_detalles_libro(keyword_results[0])  # Solo tomamos el primer resultado
+            tiempo_respuesta = time.time() - tiempo_inicio
+            
+            respuesta_llm = generar_respuesta_ollama(query, libros_encontrados=[libro_actualizado])
+            
+            return jsonify({
+                "respuesta": respuesta_llm if respuesta_llm else f"He encontrado este libro que podría interesarte: {libro_actualizado['titulo']}",
                 "libros": [libro_actualizado]
             })
 
-        # 10. Si no se encontró nada, intentar búsqueda semántica
-        tiempo_inicio_semantico = time.time()
-        query_norm = normalize_text(query)
-        book_texts = [prepare_book_text(book) for book in books]
-        query_embedding = sentence_model.encode([query_norm])[0]
-        book_embeddings = sentence_model.encode(book_texts)
-        similarities = cosine_similarity([query_embedding], book_embeddings)[0]
-        similar_indices = similarities.argsort()[-5:][::-1]
-        relevant_books = []
-        for idx in similar_indices:
-            similarity = similarities[idx]
-            if similarity > 0.3:
-                book = books[idx].copy()
-                libro_actualizado = obtener_detalles_libro(book)
-                libro_actualizado['similarity'] = float(similarity)
-                libro_actualizado['codigo_libro'] = libro_actualizado.get('codigo_libro', 'No especificado')
-                libro_actualizado['ubicacion'] = libro_actualizado.get('ubicacion', 'No especificada')
-                relevant_books.append(libro_actualizado)
+        # Si no se encontraron resultados
+        tiempo_respuesta = time.time() - tiempo_inicio
+        return jsonify({
+            "respuesta": "No encontré libros que coincidan con tu búsqueda. ¿Podrías ser más específico?",
+            "libros": []
+        })
         
-        if relevant_books:
-            tiempo_respuesta = time.time() - tiempo_inicio_semantico
-            registrar_log(query, f"He encontrado estos libros que podrían interesarte: {', '.join([libro['titulo'] for libro in relevant_books])}", tiempo_respuesta)
-            respuesta_llm = generar_respuesta_ollama(query, libros_encontrados=relevant_books)
-            tiempo_respuesta = time.time() - tiempo_inicio
-            registrar_log(query, respuesta_llm, tiempo_respuesta)
-            return jsonify({
-                "respuesta": respuesta_llm if respuesta_llm else f"He encontrado estos libros que podrían interesarte: {', '.join([libro['titulo'] for libro in relevant_books])}",
-                "libros": relevant_books
-            })
-        else:
-            tiempo_inicio_semantico = time.time()
-            prompt = f"""Usuario: {query}
-
-Asistente: Lo siento, no encontré libros que coincidan exactamente con tu búsqueda. ¿Podrías ser más específico sobre el tema, autor o título que estás buscando? También puedo ayudarte a explorar otras opciones o sugerir temas relacionados."""
-            
-            respuesta_llm = generar_respuesta_ollama(prompt)
-            tiempo_respuesta = time.time() - tiempo_inicio_semantico
-            registrar_log(query, respuesta_llm, tiempo_respuesta)
-            return jsonify({
-                "respuesta": respuesta_llm if respuesta_llm else "No se encontraron libros relevantes para tu búsqueda. ¿Podrías ser más específico?",
-                "libros": []
-            })
     except Exception as e:
         tiempo_respuesta = time.time() - tiempo_inicio
         error_msg = f"Error: {str(e)}"
