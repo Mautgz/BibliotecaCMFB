@@ -1,9 +1,13 @@
 <?php
 class PublicLibros extends Controller
 {
+    protected $model;
+
     public function __construct()
     {
         parent::__construct();
+        require_once 'Models/PublicLibrosModel.php';
+        $this->model = new PublicLibrosModel();
     }
 
     public function index()
@@ -28,6 +32,9 @@ class PublicLibros extends Controller
             'author' => $author,
             'dewey' => $dewey
         ];
+
+        // Add base_url to the data array
+        $data['base_url'] = base_url;
 
         $this->views->getView($this, "public_libros", $data);
     }

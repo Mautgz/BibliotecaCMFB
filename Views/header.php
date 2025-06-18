@@ -35,7 +35,7 @@
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
                 <a class="nav-link" href="<?php echo base_url; ?>Logout">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    <i class="fa fa-sign-out-alt"></i> Cerrar Sesión
                 </a>
             </li>
         </ul>
@@ -57,39 +57,39 @@
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     <li class="nav-item">
                         <a href="<?php echo base_url; ?>" class="nav-link">
-                            <i class="nav-icon fas fa-home"></i>
+                            <i class="nav-icon fa fa-home"></i>
                             <p>Inicio</p>
                         </a>
                     </li>
                     <?php if ($_SESSION['rol'] == 1) { ?>
                     <li class="nav-item">
                         <a href="<?php echo base_url; ?>Usuarios" class="nav-link">
-                            <i class="nav-icon fas fa-users"></i>
+                            <i class="nav-icon fa fa-users"></i>
                             <p>Usuarios</p>
                         </a>
                     </li>
                     <?php } ?>
                     <li class="nav-item">
                         <a href="<?php echo base_url; ?>Libros" class="nav-link">
-                            <i class="nav-icon fas fa-book"></i>
+                            <i class="nav-icon fa fa-book"></i>
                             <p>Libros</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?php echo base_url; ?>Prestamos" class="nav-link">
-                            <i class="nav-icon fas fa-hand-holding"></i>
+                            <i class="nav-icon fa fa-hand-holding"></i>
                             <p>Préstamos</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?php echo base_url; ?>Configuracion" class="nav-link">
-                            <i class="nav-icon fas fa-cog"></i>
+                            <i class="nav-icon fa fa-cog"></i>
                             <p>Configuración</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?php echo base_url; ?>Carousel" class="nav-link">
-                            <i class="nav-icon fas fa-images"></i>
+                            <i class="nav-icon fa fa-images"></i>
                             <p>Gestionar Carousel</p>
                         </a>
                     </li>

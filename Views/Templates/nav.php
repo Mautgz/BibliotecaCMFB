@@ -9,7 +9,7 @@ $id_user = $_SESSION['id_usuario'];
         </div>
         <div class="app-sidebar-mobile-back">
             <button class="btn btn-icon btn-link">
-                <i class="fas fa-arrow-left"></i>
+                <i class="fa fa-arrow-left"></i>
             </button>
         </div>
     </div>
@@ -18,56 +18,56 @@ $id_user = $_SESSION['id_usuario'];
             <ul class="menu">
                 <li class="menu-item">
                     <a href="<?php echo base_url; ?>Configuracion/admin" class="menu-link">
-                        <i class="fas fa-home"></i>
+                        <i class="fa fa-home"></i>
                         <span class="menu-text">Inicio</span>
                     </a>
                 </li>
                 <?php if (isset($data['perm_config']) || $id_user == 1) { ?>
                 <li class="menu-item">
                     <a href="<?php echo base_url; ?>Libros" class="menu-link">
-                        <i class="fas fa-book"></i>
+                        <i class="fa fa-book"></i>
                         <span class="menu-text">Libros</span>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="<?php echo base_url; ?>Autor" class="menu-link">
-                        <i class="fas fa-user-edit"></i>
+                        <i class="fa fa-user-edit"></i>
                         <span class="menu-text">Autor</span>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="<?php echo base_url; ?>Editorial" class="menu-link">
-                        <i class="fas fa-building"></i>
+                        <i class="fa fa-building"></i>
                         <span class="menu-text">Editorial</span>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="<?php echo base_url; ?>Estudiantes" class="menu-link">
-                        <i class="fas fa-users"></i>
+                        <i class="fa fa-users"></i>
                         <span class="menu-text">Estudiantes</span>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="<?php echo base_url; ?>Materias" class="menu-link">
-                        <i class="fas fa-bookmark"></i>
+                        <i class="fa fa-bookmark"></i>
                         <span class="menu-text">Materias</span>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="<?php echo base_url; ?>Prestamos" class="menu-link">
-                        <i class="fas fa-hand-holding"></i>
+                        <i class="fa fa-hand-holding"></i>
                         <span class="menu-text">Préstamos</span>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="<?php echo base_url; ?>Carousel" class="menu-link">
-                        <i class="fas fa-images"></i>
+                        <i class="fa fa-images"></i>
                         <span class="menu-text">Carousel</span>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="<?php echo base_url; ?>Reportes" class="menu-link">
-                        <i class="fas fa-chart-bar"></i>
+                        <i class="fa fa-chart-bar"></i>
                         <span class="menu-text">Reportes</span>
                     </a>
                 </li>
@@ -75,7 +75,7 @@ $id_user = $_SESSION['id_usuario'];
                 <?php if ($id_user == 1) { ?>
                 <li class="menu-item">
                     <a href="<?php echo base_url; ?>Usuarios" class="menu-link">
-                        <i class="fas fa-users-cog"></i>
+                        <i class="fa fa-users-cog"></i>
                         <span class="menu-text">Usuarios</span>
                     </a>
                 </li>

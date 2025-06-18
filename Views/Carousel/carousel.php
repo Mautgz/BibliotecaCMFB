@@ -151,10 +151,10 @@
                     <div class="product-cell">${item.order_number}</div>
                     <div class="product-cell">
                         <button class="btn btn-primary btn-sm" onclick="editCarouselItem(${item.id})">
-                            <i class="fas fa-edit"></i>
+                            <i class="fa fa-edit"></i>
                         </button>
                         <button class="btn btn-danger btn-sm" onclick="deleteCarouselItem(${item.id})">
-                            <i class="fas fa-trash"></i>
+                            <i class="fa fa-trash"></i>
                         </button>
                     </div>
                 </div>

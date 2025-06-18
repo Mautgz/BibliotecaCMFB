@@ -21,7 +21,10 @@
 	// Set initial active toggle
 	$("[data-toggle='treeview.'].is-expanded").parent().toggleClass('is-expanded');
 
-	//Activate bootstrip tooltips
-	$("[data-toggle='tooltip']").tooltip();
+	// Activar el menú lateral
+	$("[data-toggle='push-menu']").pushMenu();
+
+	// Activar el control deslizante
+	$("[data-toggle='control-sidebar']").controlSidebar();
 
 })();

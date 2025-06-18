@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html
+      - ./apache-config.conf:/etc/apache2/sites-available/000-default.conf
+    depends_on:
+      - db
+    networks:
+      - biblio-network
+
+  chatbot:
+    build: 
+      context: ./chatbot_python_service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=your_password
+      - MYSQL_DATABASE=biblioteca
+    depends_on:
+      - db
+      - ollama
+    networks:
+      - biblio-network
+
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=your_password
+      - MYSQL_DATABASE=biblioteca
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./biblioteca.sql:/docker-entrypoint-initdb.d/biblioteca.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - biblio-network
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - biblio-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=root
+      - PMA_PASSWORD=your_password
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    networks:
+      - biblio-network
+
+networks:
+  biblio-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  ollama_data: 

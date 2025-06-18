@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <title>Catálogo Público de Libros</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap 5 CSS desde CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 4.5.3 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
     <!-- Main CSS-->
-    <link href="<?php echo base_url; ?>Assets/css/main.css" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url; ?>Assets/css/font-awesome.min.css">
+    <link href="<?php echo $data['base_url']; ?>Assets/css/main.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $data['base_url']; ?>Assets/css/font-awesome.min.css">
     <style>
         
         body {
@@ -427,24 +427,25 @@
     <!-- Header estilo universitario -->
     <header class="uni-header">
         <div class="container">
-            <a class="uni-header__logo" href="<?php echo base_url; ?>">Biblioteca Universitaria</a>
-            <div class="uni-header__subtitle">Catálogo público de libros y recursos académicos</div>
+            <h1>Bienvenidos a la Biblioteca virtual del CMFB</h1>
+            <div class="uni-header__subtitle">Catálogo público de libros</div>
         </div>
     </header>
 
     <!-- Carousel -->
-    <script>
-        var base_url = "<?php echo base_url; ?>";
-    </script>
-    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+    <div class="container-fluid px-0">
+        <div id="mainCarousel" class="carousel slide" data-ride="carousel" data-interval="5000">
         <div class="carousel-indicators" id="carouselIndicators"></div>
         <div class="carousel-inner" id="carouselItems"></div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+            <a class="carousel-control-prev" href="#mainCarousel" role="button" data-slide="prev">
             <span class="carousel-control-prev-icon"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+                <span class="sr-only">Anterior</span>
+            </a>
+            <a class="carousel-control-next" href="#mainCarousel" role="button" data-slide="next">
             <span class="carousel-control-next-icon"></span>
-        </button>
+                <span class="sr-only">Siguiente</span>
+            </a>
+        </div>
     </div>
 
     <!-- Modal para imagen expandida -->
@@ -510,69 +511,89 @@
 
             <!-- Filtros de búsqueda -->
             <div class="search-filters">
-                <form id="searchForm" class="row">
+                <form id="searchForm" class="row" method="GET" action="">
                     <div class="col-md-5">
                         <div class="form-group">
-                            <input type="text" class="form-control" id="searchTitle" placeholder="Buscar por título..." value="<?php echo htmlspecialchars($data['filters']['title'] ?? ''); ?>">
+                            <input type="text" class="form-control" name="title" id="searchTitle" placeholder="Buscar por título..." value="<?php echo htmlspecialchars($data['filters']['title'] ?? ''); ?>">
                         </div>
                     </div>
                     <div class="col-md-5">
                         <div class="form-group">
-                            <input type="text" class="form-control" id="searchAuthor" placeholder="Buscar por autor..." value="<?php echo htmlspecialchars($data['filters']['author'] ?? ''); ?>">
+                            <input type="text" class="form-control" name="author" id="searchAuthor" placeholder="Buscar por autor..." value="<?php echo htmlspecialchars($data['filters']['author'] ?? ''); ?>">
                         </div>
                     </div>
-                    <input type="hidden" id="searchDewey" value="<?php echo htmlspecialchars($current_dewey); ?>">
+                    <input type="hidden" name="dewey" id="searchDewey" value="<?php echo htmlspecialchars($data['filters']['dewey'] ?? ''); ?>">
                     <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <i class="fa fa-search"></i> Buscar
+                        <button type="submit" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Buscar libros">
+                            <i class="fa fa-search"></i>
                         </button>
                     </div>
                 </form>
             </div>
 
             <!-- Lista de libros -->
-            <div class="row" id="booksList">
-                <?php if (empty($data['libros'])): ?>
-                    <div class="col-12">
-                        <div class="no-results">
-                            <i class="fa fa-book"></i>
-                            <h4>No se encontraron libros</h4>
-                            <p>Intenta con otros términos de búsqueda</p>
-                        </div>
-                    </div>
-                <?php else: ?>
+            <div class="row" id="libros-container">
+                <?php if (!empty($data['libros'])): ?>
                     <?php foreach ($data['libros'] as $libro): ?>
-                        <div class="col-md-6 col-lg-4">
-                            <div class="book-card">
-                                <h3 class="book-title"><?php echo htmlspecialchars($libro['titulo']); ?></h3>
-                                <p class="book-info">
-                                    <i class="fa fa-user"></i> <?php echo htmlspecialchars($libro['autor_personal']); ?>
-                                </p>
-                                <p class="book-info">
-                                    <i class="fa fa-building"></i> <?php echo htmlspecialchars($libro['editorial']); ?>
-                                </p>
-                                <?php if (!empty($libro['descripcion'])): ?>
-                                <p class="book-info">
-                                    <i class="fa fa-info-circle"></i> <?php echo htmlspecialchars($libro['descripcion']); ?>
-                                </p>
-                                <?php endif; ?>
+                        <div class="col-md-3 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title"><?php echo htmlspecialchars($libro['titulo'] ?? ''); ?></h5>
+                                    <p class="card-text">
+                                        <strong>Autor:</strong> <?php echo htmlspecialchars($libro['autor_personal'] ?? ''); ?><br>
+                                        <strong>Clasificación:</strong> <?php echo htmlspecialchars($libro['codigo_dewey'] ?? ''); ?>
+                                    </p>
+                                    <button type="button" 
+                                            class="btn btn-primary btn-sm" 
+                                            onclick="showBookDetails(<?php echo htmlspecialchars(json_encode($libro)); ?>)">
+                                        Ver detalles
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            No se encontraron libros que coincidan con los criterios de búsqueda.
+                        </div>
+                    </div>
                 <?php endif; ?>
             </div>
 
             <!-- Paginación -->
             <?php if ($data['total_pages'] > 1): ?>
-                <nav aria-label="Page navigation">
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <nav aria-label="Navegación de páginas">
                     <ul class="pagination justify-content-center">
+                                <?php if ($data['current_page'] > 1): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<?php echo $data['current_page'] - 1; ?><?php echo !empty($data['filters']['title']) ? '&title=' . urlencode($data['filters']['title']) : ''; ?><?php echo !empty($data['filters']['author']) ? '&author=' . urlencode($data['filters']['author']) : ''; ?><?php echo !empty($data['filters']['dewey']) ? '&dewey=' . urlencode($data['filters']['dewey']) : ''; ?>">
+                                            Anterior
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                                
                         <?php for ($i = 1; $i <= $data['total_pages']; $i++): ?>
-                            <li class="page-item <?php echo $i == $data['current_page'] ? 'active' : ''; ?>">
-                                <a class="page-link" href="?page=<?php echo $i; ?><?php echo !empty($data['filters']['title']) ? '&title='.urlencode($data['filters']['title']) : ''; ?><?php echo !empty($data['filters']['author']) ? '&author='.urlencode($data['filters']['author']) : ''; ?><?php echo !empty($data['filters']['dewey']) ? '&dewey='.urlencode($data['filters']['dewey']) : ''; ?>"><?php echo $i; ?></a>
+                                    <li class="page-item <?php echo $i === $data['current_page'] ? 'active' : ''; ?>">
+                                        <a class="page-link" href="?page=<?php echo $i; ?><?php echo !empty($data['filters']['title']) ? '&title=' . urlencode($data['filters']['title']) : ''; ?><?php echo !empty($data['filters']['author']) ? '&author=' . urlencode($data['filters']['author']) : ''; ?><?php echo !empty($data['filters']['dewey']) ? '&dewey=' . urlencode($data['filters']['dewey']) : ''; ?>">
+                                            <?php echo $i; ?>
+                                        </a>
                             </li>
                         <?php endfor; ?>
+                                
+                                <?php if ($data['current_page'] < $data['total_pages']): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<?php echo $data['current_page'] + 1; ?><?php echo !empty($data['filters']['title']) ? '&title=' . urlencode($data['filters']['title']) : ''; ?><?php echo !empty($data['filters']['author']) ? '&author=' . urlencode($data['filters']['author']) : ''; ?><?php echo !empty($data['filters']['dewey']) ? '&dewey=' . urlencode($data['filters']['dewey']) : ''; ?>">
+                                            Siguiente
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
                     </ul>
                 </nav>
+                    </div>
+                </div>
             <?php endif; ?>
         </div>
     </main>
@@ -593,7 +614,12 @@
                 <div class="chat-messages" id="chatMessages">
                     <div class="message bot-message">
                         <div class="message-content">
-                            ¡Hola! Soy el asistente virtual de la biblioteca. ¿En qué puedo ayudarte hoy?
+                            ¡Hola! Soy el asistente virtual de la biblioteca del CMFB. Puedo ayudarte a:
+                            <br>📚 Buscar libros por título, autor o tema
+                            <br>📍 Encontrar la ubicación de los libros
+                            <br>ℹ️ Informarte sobre préstamos y devoluciones
+                            <br>❓ Responder tus dudas sobre la biblioteca
+                            <br><br>¿En qué puedo ayudarte hoy?
                         </div>
                     </div>
                     <button class="scroll-down-btn" id="scrollDownBtn" title="Bajar al final">&#8595;</button>
@@ -605,7 +631,7 @@
                 <div class="chat-input">
                     <form id="chatForm" class="d-flex">
                         <input type="text" id="userInput" class="form-control" placeholder="Escribe tu pregunta aquí...">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" id="chatbot-send">
                             <i class="fa fa-paper-plane"></i>
                         </button>
                     </form>
@@ -620,7 +646,9 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="detalleLibroModalLabel">Detalle del Libro</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
           <div class="modal-body" id="detalleLibroBody">
             <!-- Aquí se cargará el detalle del libro -->
@@ -629,24 +657,21 @@
       </div>
     </div>
 
-    <!-- Bootstrap 5 Bundle JS desde CDN (incluye Popper) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?php echo base_url; ?>Assets/js/jquery-3.6.0.min.js"></script>
-    <script src="<?php echo base_url; ?>Assets/js/main.js"></script>
+    <!-- Scripts -->
+    <!-- jQuery primero -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <!-- Bootstrap 4.5.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"></script>
+    <!-- Custom JS -->
+    <script src="<?php echo $data['base_url']; ?>Assets/js/main.js"></script>
+
     <script>
-        $(document).ready(function() {
-            $('#searchForm').on('submit', function(e) {
-                e.preventDefault();
-                const title = $('#searchTitle').val();
-                const author = $('#searchAuthor').val();
-                const dewey = $('#searchDewey').val();
-                let url = '<?php echo base_url; ?>PublicLibros/index?';
-                if (title) url += 'title=' + encodeURIComponent(title) + '&';
-                if (author) url += 'author=' + encodeURIComponent(author) + '&';
-                if (dewey) url += 'dewey=' + encodeURIComponent(dewey);
-                window.location.href = url;
-            });
-           
+        var base_url = "<?php echo $data['base_url']; ?>";
+
+        // Chatbot functionality
+        document.addEventListener('DOMContentLoaded', function() {
             const chatbotIcon = document.getElementById('chatbotIcon');
             const chatbotWindow = document.getElementById('chatbotWindow');
             const closeChatbot = document.getElementById('closeChatbot');
@@ -656,22 +681,29 @@
             const chatbotLoader = document.getElementById('chatbotLoader');
             const scrollDownBtn = document.getElementById('scrollDownBtn');
 
+            // Toggle chatbot window
             chatbotIcon.addEventListener('click', function() {
-                chatbotWindow.classList.add('active');
+                chatbotWindow.classList.toggle('active');
+                if (chatbotWindow.classList.contains('active')) {
+                    scrollToBottom();
+                }
             });
 
+            // Close chatbot
             closeChatbot.addEventListener('click', function() {
                 chatbotWindow.classList.remove('active');
             });
 
             function checkChatOverflow() {
-                if (chatMessages.scrollHeight > chatMessages.clientHeight + 5) {
-                    chatMessages.classList.add('has-overflow');
-                    scrollDownBtn.style.display = 'flex';
-                } else {
-                    chatMessages.classList.remove('has-overflow');
-                    scrollDownBtn.style.display = 'none';
-                }
+                setTimeout(() => {
+                    if (chatMessages.scrollHeight > chatMessages.clientHeight + 5) {
+                        chatMessages.classList.add('has-overflow');
+                        scrollDownBtn.style.display = 'flex';
+                    } else {
+                        chatMessages.classList.remove('has-overflow');
+                        scrollDownBtn.style.display = 'none';
+                    }
+                }, 50);
             }
 
             scrollDownBtn.addEventListener('click', function() {
@@ -681,18 +713,11 @@
             function addMessage(content, isUser = false) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-                
                 const messageContent = document.createElement('div');
                 messageContent.className = 'message-content';
-                
-                // Procesar el contenido para manejar saltos de línea
-                const formattedContent = content.replace(/\n/g, '<br>');
-                messageContent.innerHTML = formattedContent;
-                
+                messageContent.textContent = content;
                 messageDiv.appendChild(messageContent);
                 chatMessages.appendChild(messageDiv);
-                
-                // Hacer scroll al final del chat
                 chatMessages.scrollTop = chatMessages.scrollHeight;
                 checkChatOverflow();
             }
@@ -703,13 +728,21 @@
                 suggestionsDiv.className = 'message bot-message';
                 const contentDiv = document.createElement('div');
                 contentDiv.className = 'message-content';
-                books.forEach(book => {
+                
+                // Limitar a 2 libros
+                const limitedBooks = books.slice(0, 2);
+                
+                limitedBooks.forEach(book => {
                     const bookDiv = document.createElement('div');
                     bookDiv.className = 'book-suggestion';
                     bookDiv.innerHTML = `
                         <h6>${book.titulo}</h6>
-                        <p><strong>Autor:</strong> ${book.autor_personal || 'No especificado'}</p>
+                        <p><strong>Autor:</strong> ${book.autor_personal || book.autor || 'No especificado'}</p>
                         <p><strong>Editorial:</strong> ${book.editorial || 'No especificada'}</p>
+                        <p><strong>Materia:</strong> ${book.materia || 'No especificada'}</p>
+                        <p><strong>Código:</strong> ${book.codigo_libro || 'No especificado'}</p>
+                        <p><strong>Ubicación:</strong> ${book.ubicacion || 'No especificada'}</p>
+                        <p><strong>Estado:</strong> <span style="color:${book.estado === 'Disponible' ? 'green' : 'red'}">${book.estado || 'No especificado'}</span></p>
                     `;
                     contentDiv.appendChild(bookDiv);
                 });
@@ -718,74 +751,145 @@
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
 
+            // Lista de saludos y presentaciones comunes
+            const saludos = [
+                'hola', 'buenos días', 'buenas tardes', 'buenas noches', 'saludos',
+                'mucho gusto', 'encantado', 'encantada', 'un placer', 'gusto en conocerte',
+                'como estas', 'cómo estás', 'que tal', 'qué tal', 'bienvenido', 'bienvenida'
+            ];
+
             chatForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 const consulta = userInput.value.trim();
                 if (!consulta) return;
-                
-                // Mostrar mensaje del usuario
+
+                // Agregar mensaje del usuario
                 addMessage(consulta, true);
                 userInput.value = '';
                 chatbotLoader.style.display = 'block';
 
+                // Verificar si es un saludo
+                const esSaludo = saludos.some(saludo => 
+                    consulta.toLowerCase().includes(saludo.toLowerCase())
+                );
+
+                if (esSaludo) {
+                    addMessage("¡Hola! Soy Mister Biblio, ¿en qué puedo ayudarte hoy? Puedo ayudarte a buscar libros, informarte sobre nuestros servicios o responder tus preguntas sobre la biblioteca.");
+                    chatbotLoader.style.display = 'none';
+                    return;
+                }
+
                 try {
-                    const response = await fetch(base_url + 'Chatbot/obtenerRespuesta', {
+                    const respuesta = await fetch(base_url + 'Chatbot/obtenerRespuesta', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'Accept': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: 'query=' + encodeURIComponent(consulta)
                     });
-
-                    if (!response.ok) {
-                        throw new Error('Error en la respuesta del servidor');
+                    const output = await respuesta.text();
+                    let datos;
+                    try {
+                        datos = JSON.parse(output);
+                    } catch (e) {
+                        console.error("Respuesta no es JSON válido:", output);
+                        addMessage("Lo siento, ha ocurrido un error al procesar la respuesta del servidor.");
+                        chatbotLoader.style.display = 'none';
+                        return;
                     }
-
-                    const data = await response.json();
-                    
-                    // Mostrar la respuesta del bot
-                    if (data.respuesta) {
-                        addMessage(data.respuesta);
+                    addMessage(datos.respuesta);
+                    if (datos.libros && datos.libros.length > 0) {
+                        addBookSuggestions(datos.libros);
                     }
-
-                    // Mostrar sugerencias de libros si existen
-                    if (data.libros && data.libros.length > 0) {
-                        const suggestionsDiv = document.createElement('div');
-                        suggestionsDiv.className = 'message bot-message';
-                        const contentDiv = document.createElement('div');
-                        contentDiv.className = 'message-content';
-
-                        data.libros.forEach(book => {
-                            const bookDiv = document.createElement('div');
-                            bookDiv.className = 'book-suggestion';
-                            bookDiv.innerHTML = `
-                                <h6>${book.titulo || 'Sin título'}</h6>
-                                <p><strong>Autor:</strong> ${book.autor_personal || 'No especificado'}</p>
-                                <p><strong>Editorial:</strong> ${book.editorial || 'No especificada'}</p>
-                                <p><strong>Materia:</strong> ${book.materia || 'No especificada'}</p>
-                                <p><strong>Ubicación:</strong> ${book.ubicacion || 'No especificada'}</p>
-                                <p><strong>Estado:</strong> ${book.estado || 'No especificado'}</p>
-                            `;
-                            contentDiv.appendChild(bookDiv);
-                        });
-
-                        suggestionsDiv.appendChild(contentDiv);
-                        chatMessages.appendChild(suggestionsDiv);
-                    }
-
-                    // Hacer scroll al final del chat
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                    checkChatOverflow();
-
                 } catch (error) {
-                    console.error('Error:', error);
-                    addMessage('Lo siento, ha ocurrido un error al procesar tu consulta. Por favor, intenta de nuevo.');
+                    console.error("Error al procesar la respuesta del script Python:", error);
+                    addMessage("Lo siento, ha ocurrido un error al procesar tu consulta.");
                 } finally {
                     chatbotLoader.style.display = 'none';
                 }
             });
+
+            // Llama a checkChatOverflow al cargar la página
+            checkChatOverflow();
         });
+
+        // Función para manejar la búsqueda
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('searchTitle').value.trim();
+            const author = document.getElementById('searchAuthor').value.trim();
+            const dewey = document.getElementById('searchDewey').value;
+            
+            // Construir la URL con los parámetros de búsqueda
+            let url = window.location.pathname;
+            const params = new URLSearchParams();
+            
+            if (title) params.append('title', title);
+            if (author) params.append('author', author);
+            if (dewey) params.append('dewey', dewey);
+            
+            // Agregar los parámetros a la URL
+            if (params.toString()) {
+                url += '?' + params.toString();
+            }
+            
+            // Redirigir a la URL con los parámetros
+            window.location.href = url;
+        });
+
+        // Actualizar el valor del campo dewey cuando se hace clic en los botones de categoría
+        document.querySelectorAll('.btn-outline-primary, .btn-primary').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const dewey = this.getAttribute('href').match(/dewey=(\d+)/)?.[1] || '';
+                document.getElementById('searchDewey').value = dewey;
+            });
+        });
+
+        function showBookDetails(libro) {
+            // Crear el contenido del modal
+            let modalContent = `
+                <div class="row">
+                    <div class="col-md-4">
+                        <img src="${libro.imagen ? base_url + 'Assets/img/libros/' + libro.imagen : base_url + 'Assets/img/no-image.jpg'}" 
+                             class="img-fluid rounded" 
+                             alt="${libro.titulo}"
+                             style="max-height: 300px; object-fit: cover;">
+                    </div>
+                    <div class="col-md-8">
+                        <h4 class="mb-3">${libro.titulo}</h4>
+                        <div class="mb-2">
+                            <strong>Autor:</strong> ${libro.autor_personal || 'No especificado'}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Editorial:</strong> ${libro.editorial || 'No especificada'}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Año de edición:</strong> ${libro.anio_edicion ? new Date(libro.anio_edicion).getFullYear() : 'No especificado'}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Clasificación Dewey:</strong> ${libro.codigo_dewey || 'No especificada'}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Ubicación:</strong> ${libro.ubicacion || 'No especificada'}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Lugar de publicación:</strong> ${libro.lugar || 'No especificado'}
+                        </div>
+                        ${libro.descripcion ? `
+                        <div class="mb-2">
+                            <strong>Descripción:</strong>
+                            <p class="mt-2">${libro.descripcion}</p>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+
+            // Actualizar el contenido del modal
+            document.getElementById('detalleLibroBody').innerHTML = modalContent;
+
+            // Mostrar el modal
+            $('#detalleLibroModal').modal('show');
+        }
 
         // ========== CARRUSEL ========== //
         function loadCarouselItems() {
@@ -794,117 +898,81 @@
             .then(data => {
                 const carouselItems = document.getElementById('carouselItems');
                 const carouselIndicators = document.getElementById('carouselIndicators');
+                    if (!carouselItems || !carouselIndicators) return;
+
                 carouselItems.innerHTML = '';
                 carouselIndicators.innerHTML = '';
+
                 data.forEach((item, index) => {
-                    let imagePath = item.image_path.startsWith('/') ? item.image_path.substring(1) : item.image_path;
-                    let imageUrl = base_url + imagePath;
+                        const imageUrl = base_url + item.image_path;
+                        
                     carouselIndicators.innerHTML += `
-                        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="${index}" ${index === 0 ? 'class="active"' : ''}></button>
+                            <li data-target="#mainCarousel" data-slide-to="${index}" ${index === 0 ? 'class="active"' : ''}></li>
                     `;
+                        
                     carouselItems.innerHTML += `
                         <div class="carousel-item ${index === 0 ? 'active' : ''}">
                             <div class="carousel-content" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${imageUrl}'); cursor: pointer;" onclick="expandCarouselImage('${imageUrl}')">
-                                <div class="container">
                                     <div class="carousel-caption">
                                         <h2>${item.title}</h2>
                                         <p>${item.description}</p>
-                                        ${item.button_text ? `<a href="${item.button_link}" class="btn btn-primary btn-lg">${item.button_text}</a>` : ''}
-                                    </div>
+                                        ${item.button_text ? `<a href="${item.button_link}" class="btn btn-primary">${item.button_text}</a>` : ''}
                                 </div>
                             </div>
                         </div>
                     `;
                 });
-                // Reinicializar el carrusel de Bootstrap después de llenar los items
-                setTimeout(function() {
-                    var mainCarousel = document.getElementById('mainCarousel');
-                    if (mainCarousel) {
-                        var carousel = bootstrap.Carousel.getInstance(mainCarousel);
-                        if (carousel) {
-                            carousel.dispose();
-                        }
-                        carousel = new bootstrap.Carousel(mainCarousel, { interval: 5000, ride: 'carousel' });
-                        carousel.cycle();
-                    }
-                }, 100);
-            });
-        }
-        // Función para expandir la imagen en el modal
-        function expandCarouselImage(imageUrl) {
-            document.getElementById('expandedCarouselImage').src = imageUrl;
-            var modal = new bootstrap.Modal(document.getElementById('carouselImageModal'));
-            modal.show();
+
+                    // Inicializar el carousel
+                    $('#mainCarousel').carousel({
+                        interval: 5000
+                    });
+                })
+                .catch(error => console.error('Error:', error));
         }
 
-        // ========== LIBROS Y MODAL DETALLE ========== //
-        // Guardar los libros cargados globalmente para fácil acceso
-        window.librosPublicos = [];
-        // Renderizar la lista de libros y añadir evento click para el modal
+        function expandCarouselImage(imageUrl) {
+            const expandedImage = document.getElementById('expandedCarouselImage');
+            if (expandedImage) {
+                expandedImage.src = imageUrl;
+                $('#carouselImageModal').modal('show');
+            }
+        }
+
+        // ========== LIBROS ========== //
         function renderBooksList(libros) {
-            window.librosPublicos = libros;
             const booksList = document.getElementById('booksList');
+            if (!booksList) return;
+
             booksList.innerHTML = '';
-            if (libros.length === 0) {
+            if (!libros || libros.length === 0) {
                 booksList.innerHTML = `<div class="col-12"><div class="no-results"><i class="fa fa-book"></i><h4>No se encontraron libros</h4><p>Intenta con otros términos de búsqueda</p></div></div>`;
                 return;
             }
+
             libros.forEach(libro => {
-                booksList.innerHTML += `<div class="col-md-6 col-lg-4"><div class="book-card" style="cursor:pointer" onclick="mostrarDetalleLibro(${libro.id})"><h3 class="book-title">${libro.titulo}</h3><p class="book-info"><i class="fa fa-user"></i> ${libro.autor_personal}</p><p class="book-info"><i class="fa fa-building"></i> ${libro.editorial}</p>${libro.descripcion ? `<p class="book-info"><i class="fa fa-info-circle"></i> ${libro.descripcion}</p>` : ''}</div></div>`;
+                booksList.innerHTML += `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="book-card" style="cursor:pointer" onclick="mostrarDetalleLibro(${libro.id})">
+                            <h3 class="book-title">${libro.titulo}</h3>
+                            <p class="book-info"><i class="fa fa-user"></i> ${libro.autor_personal || 'No especificado'}</p>
+                            <p class="book-info"><i class="fa fa-building"></i> ${libro.editorial || 'No especificada'}</p>
+                            ${libro.descripcion ? `<p class="book-info"><i class="fa fa-info-circle"></i> ${libro.descripcion}</p>` : ''}
+                        </div>
+                    </div>
+                `;
             });
         }
-        // Mostrar detalle de libro al hacer click en la tarjeta
-        function mostrarDetalleLibro(libroId) {
-            const libro = window.librosPublicos?.find(l => l.id == libroId);
-            if (!libro) return;
-            let html = `<div class='row'>
-                <div class='col-md-4 text-center'>
-                    <img src='${libro.imagen ? (base_url + libro.imagen) : base_url + "Assets/img/logo.png"}' alt='${libro.titulo}' style='max-width:100%; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
-                </div>
-                <div class='col-md-8'>
-                    <h3>${libro.titulo}</h3>
-                    <p><strong>Autor:</strong> ${libro.autor_personal || '-'}</p>
-                    <p><strong>Editorial:</strong> ${libro.editorial || '-'}</p>
-                    <p><strong>Materia:</strong> ${libro.materia || '-'}</p>
-                    <p><strong>Descripción:</strong> ${libro.descripcion || '-'}</p>
-                </div>
-            </div>`;
-            // Libros similares (por materia)
-            if (libro.materia && window.librosPublicos) {
-                const similares = window.librosPublicos.filter(l => l.materia === libro.materia && l.id != libro.id).slice(0,3);
-                if (similares.length > 0) {
-                    html += `<hr><h5>Libros similares</h5><div class='row'>`;
-                    similares.forEach(sim => {
-                        html += `<div class='col-md-4 mb-2'><div class='card h-100' style='cursor:pointer' onclick='mostrarDetalleLibro(${sim.id})'>
-                            <img src='${sim.imagen ? (base_url + sim.imagen) : base_url + "Assets/img/logo.png"}' class='card-img-top' alt='${sim.titulo}' style='height:120px;object-fit:cover;'>
-                            <div class='card-body p-2'><h6 class='card-title mb-0'>${sim.titulo}</h6></div>
-                        </div></div>`;
-                    });
-                    html += `</div>`;
-                }
-            }
-            document.getElementById('detalleLibroBody').innerHTML = html;
-            var modal = new bootstrap.Modal(document.getElementById('detalleLibroModal'));
-            modal.show();
-        }
-        // Hook para interceptar el renderizado de libros si ya existe
-        if (typeof renderBooksListOriginal === 'undefined') {
-            window.renderBooksListOriginal = window.renderBooksList;
-            window.renderBooksList = renderBooksList;
-        }
-        // Si los libros se cargan por PHP, inicializa la variable global
-        <?php if (!empty($data['libros'])): ?>
-        window.librosPublicos = <?php echo json_encode($data['libros']); ?>;
-        <?php endif; ?>
 
-        // ========== INICIALIZACIÓN GENERAL ========== //
-        document.addEventListener('DOMContentLoaded', function() {
+        // ========== INICIALIZACIÓN ========== //
+        $(document).ready(function() {
+            // Cargar carousel
             loadCarouselItems();
-            // Si los libros se cargan por PHP, renderízalos
+            
+            // Cargar libros si existen
             <?php if (!empty($data['libros'])): ?>
-            renderBooksList(window.librosPublicos);
+            renderBooksList(<?php echo json_encode($data['libros']); ?>);
             <?php endif; ?>
-            checkChatOverflow();
         });
     </script>
 </body>

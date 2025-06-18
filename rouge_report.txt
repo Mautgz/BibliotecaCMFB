@@ -1,0 +1,602 @@
+EVALUACIÓN ROUGE DE RESPUESTAS
+==================================================
+
+
+Evaluación de respuesta 1:
+Real: ¡Encontramos "Las cartas de San Francisco Javier"! Esta obra escrita por Francisco Javier y José Sola es relevante en ese tema. También te recomendamos "Cartas Griegas". Ambos libros están disponibles en la ubicación mencionada.
+Predicha: ¡Encontramos "Las cartas de San Francisco Javier"! Este libro contiene las cartas escritas por el santo español durante su misiones en América. También recomendamos "Cartas de amor entre las cartas" de Jorge Luis Borges y Adolfo Bioy Casares, que explora la temática de las correspondencias a través de una fábula.
+
+rouge1:
+  Precision: 0.3214
+  Recall: 0.4865
+  F1: 0.3871
+
+rouge2:
+  Precision: 0.1636
+  Recall: 0.2500
+  F1: 0.1978
+
+rougeL:
+  Precision: 0.2679
+  Recall: 0.4054
+  F1: 0.3226
+--------------------------------------------------
+
+Evaluación de respuesta 2:
+Real: ¡Encontramos "Las cartas de San Francisco Javier"! Esta obra escrita por Francisco Javier y José Sola es relevante en ese tema. También te recomendamos "Cartas Griegas". Ambos libros están disponibles en la ubicación mencionada.
+Predicha: Encontramos "Las cartas de San Francisco Javier" por autores Francisco Javier y José Sola. Está disponible en la ubicación E1, B - ESTE, FILA 3, DERECHA.
+
+rouge1:
+  Precision: 0.7308
+  Recall: 0.5135
+  F1: 0.6032
+
+rouge2:
+  Precision: 0.5600
+  Recall: 0.3889
+  F1: 0.4590
+
+rougeL:
+  Precision: 0.7308
+  Recall: 0.5135
+  F1: 0.6032
+--------------------------------------------------
+
+Evaluación de respuesta 3:
+Real: El libro "Certeza de un futuro Mejor" se encuentra en E1, B - ESTE, FILA 3, DERECHA. Está disponible.
+Predicha: El libro "Certeza de un futuro Mejor" se encuentra en E1, B - ESTE, FILA 3, DERECHA. Está disponible.
+
+rouge1:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rouge2:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rougeL:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+--------------------------------------------------
+
+Evaluación de respuesta 4:
+Real: No he encontrado libros de Gabriel García Márquez en este momento.
+Predicha: No he encontrado libros de Gabriel García Márquez en este momento.
+
+rouge1:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rouge2:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rougeL:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+--------------------------------------------------
+
+Evaluación de respuesta 5:
+Real: Encuentro dos libros relacionados con Matemáticas: "Matemática, colección de enciclopedias monográficas Tomo 3 - Cálculo y Análisis" y "Matemática, colección de enciclopedias monográficas Tomo 4 - Geometría y Trigonometría". Ambos libros están disponibles en la ubicación E1, A - OESTE, FILA 4, DERECHA.
+Predicha: Encuentro dos libros relacionados con Matemáticas: "Matemática, colección de enciclopedias monográficas Tomo 3 - Cálculo y Análisis" y "Matemática, colección de enciclopedias monográficas Tomo 4 - Geometría y Trigonometría". Ambos libros están disponibles en la ubicación E1, A - OESTE, FILA 4, DERECHA.
+
+rouge1:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rouge2:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rougeL:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+--------------------------------------------------
+
+Evaluación de respuesta 6:
+Real: Encontramos el libro "Introduccion a la filosofia de la historia" de Raymond Aron. También recomendamos "La Edad Moderna: una historia intelectual" de Peter Burke. Ambos libros están disponibles en nuestra biblioteca.
+Predicha: Encontramos el libro "Introduccion a la filosofia de la historia" de Raymond Aron. También recomendamos "La Edad Moderna: una historia intelectual" de Peter Burke. Ambos libros están disponibles en nuestra biblioteca.
+
+rouge1:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rouge2:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rougeL:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+--------------------------------------------------
+
+Evaluación de respuesta 7:
+Real: 1. "Imperialism: A Study" por Vladimir Lenin, ubicación: D5, A - Oeste, Fila 4, Derecha, Estado: Disponible.
+2. "The Wretched of the Earth" por Frantz Fanon, ubicación: B6, C - Este, Fila 2, Izquierda, Estado: Disponible.
+Predicha: Sobre colonialismo, está El Colonialismo de Carlos Marx, y también Colonialismo y Anticolonialismo de Aimé Césaire.
+
+rouge1:
+  Precision: 0.1667
+  Recall: 0.0833
+  F1: 0.1111
+
+rouge2:
+  Precision: 0.0000
+  Recall: 0.0000
+  F1: 0.0000
+
+rougeL:
+  Precision: 0.1111
+  Recall: 0.0556
+  F1: 0.0741
+--------------------------------------------------
+
+Evaluación de respuesta 8:
+Real: ¡Sí, encontramos el libro "El capital visto por su autor" de Karl Marx y Friedrich Engels en la estantería E1, B - ESTE. Este libro está disponible para tomar prestado.
+Predicha: ¡Sí, encontramos el libro "El capital visto por su autor" de Karl Marx y Friedrich Engels en la estantería E1, B - ESTE. Este libro está disponible para tomar prestado.
+
+rouge1:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rouge2:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rougeL:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+--------------------------------------------------
+
+Evaluación de respuesta 9:
+Real: Lo siento, no tengo información detallada sobre el contenido de 'Certeza de un futuro Mejor'. Es un libro de Religión escrito por Víctor E. Ampuero Matta.
+Predicha: Lo siento, no tengo información detallada sobre el contenido de 'Certeza de un futuro Mejor'. Es un libro de Religión escrito por Víctor E. Ampuero Matta.
+
+rouge1:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rouge2:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rougeL:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+--------------------------------------------------
+
+Evaluación de respuesta 10:
+Real: Lo siento, no tengo información detallada sobre el contenido de 'Las cartas de San Francisco Javier'. Es un libro de Religión escrito por Francisco Javier, José Sola.
+Predicha: Este libro presenta simbólicamente las misiones de San Francisco Javier. Aunque no llegó a América, el libro usa un emblema publicado en 1640 que lo muestra soñando con ese viaje. Es un relato con tintes heroicos y religiosos, muy influenciado por símbolos clásicos como Eneas llevando a su padre.
+
+rouge1:
+  Precision: 0.1481
+  Recall: 0.3478
+  F1: 0.2078
+
+rouge2:
+  Precision: 0.0566
+  Recall: 0.1364
+  F1: 0.0800
+
+rougeL:
+  Precision: 0.1111
+  Recall: 0.2609
+  F1: 0.1558
+--------------------------------------------------
+
+Evaluación de respuesta 11:
+Real: Lo siento, no tengo información detallada sobre el contenido de 'Las cartas de San Francisco Javier'. Es un libro de Religión escrito por Francisco Javier, José Sola.
+Predicha: Este libro presenta simbólicamente las misiones de San Francisco Javier. Aunque no llegó a América, el libro usa un emblema publicado en 1640 que lo muestra soñando con ese viaje. Es un relato con tintes heroicos y religiosos, muy influenciado por símbolos clásicos como Eneas llevando a su padre.
+
+rouge1:
+  Precision: 0.1481
+  Recall: 0.3478
+  F1: 0.2078
+
+rouge2:
+  Precision: 0.0566
+  Recall: 0.1364
+  F1: 0.0800
+
+rougeL:
+  Precision: 0.1111
+  Recall: 0.2609
+  F1: 0.1558
+--------------------------------------------------
+
+Evaluación de respuesta 12:
+Real: Lo siento, no tengo información detallada sobre el contenido de 'Las cartas de San Francisco Javier'. Es un libro de Religión escrito por Francisco Javier, José Sola.
+Predicha: Lo siento, no puedo generar un resumen detallado para 'Las cartas de San Francisco Javier'. Sin embargo, puedo decirte que es un libro de Religión escrito por Francisco Javier, José Sola.
+
+rouge1:
+  Precision: 0.7143
+  Recall: 0.6522
+  F1: 0.6818
+
+rouge2:
+  Precision: 0.6500
+  Recall: 0.5909
+  F1: 0.6190
+
+rougeL:
+  Precision: 0.7143
+  Recall: 0.6522
+  F1: 0.6818
+--------------------------------------------------
+
+Evaluación de respuesta 13:
+Real: Lo siento, no tengo información detallada sobre el contenido de 'Las cartas de San Francisco Javier'. Es un libro de Religión escrito por Francisco Javier, José Sola.
+Predicha: Este libro presenta simbólicamente las misiones de San Francisco Javier. Aunque no llegó a América, el libro usa un emblema publicado en 1640 que lo muestra soñando con ese viaje. Es un relato con tintes heroicos y religiosos, muy influenciado por símbolos clásicos como Eneas llevando a su padre.
+
+rouge1:
+  Precision: 0.1481
+  Recall: 0.3478
+  F1: 0.2078
+
+rouge2:
+  Precision: 0.0566
+  Recall: 0.1364
+  F1: 0.0800
+
+rougeL:
+  Precision: 0.1111
+  Recall: 0.2609
+  F1: 0.1558
+--------------------------------------------------
+
+Evaluación de respuesta 14:
+Real: Lo siento, no puedo generar un resumen detallado para 'El Colonialismo'. Sin embargo, puedo decirte que es un libro de Ciencias Sociales escrito por Carlos Marx.
+Predicha: Sobre colonialismo, está El Colonialismo de Carlos Marx, y también Colonialismo y Anticolonialismo de Aimé Césaire.
+
+rouge1:
+  Precision: 0.2222
+  Recall: 0.2667
+  F1: 0.2424
+
+rouge2:
+  Precision: 0.1176
+  Recall: 0.1429
+  F1: 0.1290
+
+rougeL:
+  Precision: 0.2222
+  Recall: 0.2667
+  F1: 0.2424
+--------------------------------------------------
+
+Evaluación de respuesta 15:
+Real: Los "Las cartas de San Francisco Javier" son una colección de correspondencias escritas por San Francisco Javier. Estas cartas presentan su experiencia en Asia y América del Sur durante el siglo XVI.
+Predicha: Este libro presenta simbólicamente las misiones de San Francisco Javier. Aunque no llegó a América, el libro usa un emblema publicado en 1640 que lo muestra soñando con ese viaje. Es un relato con tintes heroicos y religiosos, muy influenciado por símbolos clásicos como Eneas llevando a su padre.
+
+rouge1:
+  Precision: 0.2222
+  Recall: 0.3529
+  F1: 0.2727
+
+rouge2:
+  Precision: 0.0755
+  Recall: 0.1212
+  F1: 0.0930
+
+rougeL:
+  Precision: 0.1481
+  Recall: 0.2353
+  F1: 0.1818
+--------------------------------------------------
+
+Evaluación de respuesta 16:
+Real: Los "Las cartas de San Francisco Javier" son una colección de correspondencias escritas por San Francisco Javier. Estas cartas presentan su experiencia en Asia y América del Sur durante el siglo XVI.
+Predicha: Lo siento, no puedo generar un resumen detallado para 'Las cartas de San Francisco Javier'. Sin embargo, puedo decirte que es un libro de Religión escrito por Francisco Javier, José Sola.
+
+rouge1:
+  Precision: 0.4762
+  Recall: 0.2941
+  F1: 0.3636
+
+rouge2:
+  Precision: 0.3000
+  Recall: 0.1818
+  F1: 0.2264
+
+rougeL:
+  Precision: 0.4762
+  Recall: 0.2941
+  F1: 0.3636
+--------------------------------------------------
+
+Evaluación de respuesta 17:
+Real: Los "Las cartas de San Francisco Javier" son una colección de correspondencias escritas por San Francisco Javier. Estas cartas presentan su experiencia en Asia y América del Sur durante el siglo XVI.
+Predicha: Este libro presenta simbólicamente las misiones de San Francisco Javier. Aunque no llegó a América, el libro usa un emblema publicado en 1640 que lo muestra soñando con ese viaje. Es un relato con tintes heroicos y religiosos, muy influenciado por símbolos clásicos como Eneas llevando a su padre.
+
+rouge1:
+  Precision: 0.2222
+  Recall: 0.3529
+  F1: 0.2727
+
+rouge2:
+  Precision: 0.0755
+  Recall: 0.1212
+  F1: 0.0930
+
+rougeL:
+  Precision: 0.1481
+  Recall: 0.2353
+  F1: 0.1818
+--------------------------------------------------
+
+Evaluación de respuesta 18:
+Real: Encuentro una enciclopedia disponible en la biblioteca: Enciclopedia Universal Ilustrada Tomo XV. No encuentro más enciclopedias actualmente.
+Predicha: También tenemos la Enciclopedia Británica (Tomos 1–32) y la Gran Enciclopedia Popular Viking, Tomo 21.
+
+rouge1:
+  Precision: 0.2222
+  Recall: 0.2222
+  F1: 0.2222
+
+rouge2:
+  Precision: 0.0000
+  Recall: 0.0000
+  F1: 0.0000
+
+rougeL:
+  Precision: 0.2222
+  Recall: 0.2222
+  F1: 0.2222
+--------------------------------------------------
+
+Evaluación de respuesta 19:
+Real: ¡Sí! Encontramos otra enciclopedia interesante llamada "Enciclopedia Británica" (Tomos 1-32). También tenemos la "Gran Enciclopedia Popular Viking" (Tomo 21). Ambas están ubicadas en la fila 1, derecha.
+Predicha: También tenemos la Enciclopedia Británica (Tomos 1–32) y la Gran Enciclopedia Popular Viking, Tomo 21.
+
+rouge1:
+  Precision: 0.9444
+  Recall: 0.5484
+  F1: 0.6939
+
+rouge2:
+  Precision: 0.8235
+  Recall: 0.4667
+  F1: 0.5957
+
+rougeL:
+  Precision: 0.7222
+  Recall: 0.4194
+  F1: 0.5306
+--------------------------------------------------
+
+Evaluación de respuesta 20:
+Real: El libro "Ciencia y Salud con clave de las Escrituras" no fue encontrado en nuestra base de datos. El libro más cercano que podrías encontrar sobre este tema puede ser "La medicina bíblica", del autor Moisés de Mora, ubicado en la sección F1, Fila 4, Izquierda. También puedes revisar el libro "Salud y Sanidad en la Biblia" de José María Zornoza, ubicado en la sección B-ESTE, Fila 2, Derecha.
+Predicha: Dos buenos libros sobre salud: El libro de la salud de Deepak Chopra y Cómo cambiar el mundo con la comida de John Robbins.
+
+rouge1:
+  Precision: 0.5600
+  Recall: 0.1795
+  F1: 0.2718
+
+rouge2:
+  Precision: 0.0417
+  Recall: 0.0130
+  F1: 0.0198
+
+rougeL:
+  Precision: 0.4000
+  Recall: 0.1282
+  F1: 0.1942
+--------------------------------------------------
+
+Evaluación de respuesta 21:
+Real: Sí, encontramos algunos libros sobre salud. Recomendamos "El libro de la salud: La guía para vivir mejor" por Deepak Chopra y "Cómo cambiar el mundo con la comida" por John Robbins. Ambos se encuentran en la biblioteca, estado: disponible.
+Predicha: Dos buenos libros sobre salud: El libro de la salud de Deepak Chopra y Cómo cambiar el mundo con la comida de John Robbins.
+
+rouge1:
+  Precision: 0.8400
+  Recall: 0.5122
+  F1: 0.6364
+
+rouge2:
+  Precision: 0.7083
+  Recall: 0.4250
+  F1: 0.5312
+
+rougeL:
+  Precision: 0.8400
+  Recall: 0.5122
+  F1: 0.6364
+--------------------------------------------------
+
+Evaluación de respuesta 22:
+Real: ¡Sí! Tiene disponible el "Documentos Completos del Vaticano II" en la ubicación E1, B - ESTE, FILA 3, DERECHA.
+Predicha: Sí, está disponible el Documentos Completos del Vaticano II, lo encuentras en E1, B - Este, Fila 3, Derecha.
+
+rouge1:
+  Precision: 0.8333
+  Recall: 0.7895
+  F1: 0.8108
+
+rouge2:
+  Precision: 0.6471
+  Recall: 0.6111
+  F1: 0.6286
+
+rougeL:
+  Precision: 0.8333
+  Recall: 0.7895
+  F1: 0.8108
+--------------------------------------------------
+
+Evaluación de respuesta 23:
+Real: ¡Sí! Encontramos el libro "El capital visto por su autor" de Karl Marx y Friedrich Engels. Esta obra está disponible en la estantería E1, fila 1, izquierda.
+Predicha: ¡Sí! Encontramos el libro "El capital visto por su autor" de Karl Marx y Friedrich Engels. Esta obra está disponible en la estantería E1, fila 1, izquierda.
+
+rouge1:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rouge2:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rougeL:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+--------------------------------------------------
+
+Evaluación de respuesta 24:
+Real: Sí, encontramos libros sobre colonialismo. El más relevante es "El Colonialismo" de Carlos Marx, que se encuentra en E1, B - ESTE, FILA 1, IZQUIERDA y está disponible. Otra recomendación es el libro "Colonialismo y Anticolonialismo" de Aimé Césaire.
+Predicha: Sobre colonialismo, está El Colonialismo de Carlos Marx, y también Colonialismo y Anticolonialismo de Aimé Césaire.
+
+rouge1:
+  Precision: 0.9444
+  Recall: 0.4146
+  F1: 0.5763
+
+rouge2:
+  Precision: 0.6471
+  Recall: 0.2750
+  F1: 0.3860
+
+rougeL:
+  Precision: 0.8889
+  Recall: 0.3902
+  F1: 0.5424
+--------------------------------------------------
+
+Evaluación de respuesta 25:
+Real: Aquí están dos libros sobre arte que encontramos: "La libertad en el arte" de Honor Arundel (Disponible en E1, B - ESTE, FILA 1, IZQUIERDA). También recomendamos "El arte del siglo XX" de Alfred Barr (Disponible en E2, B - SUR, FILA 2, DERECHA).
+Predicha: Dos buenos libros de arte: La libertad en el arte de Honor Arundel y El arte del siglo XX de Alfred Barr.
+
+rouge1:
+  Precision: 0.8636
+  Recall: 0.4318
+  F1: 0.5758
+
+rouge2:
+  Precision: 0.6667
+  Recall: 0.3256
+  F1: 0.4375
+
+rougeL:
+  Precision: 0.8636
+  Recall: 0.4318
+  F1: 0.5758
+--------------------------------------------------
+
+Evaluación de respuesta 26:
+Real: Lo siento, no puedo generar un resumen detallado para 'La libertad en el arte'. Sin embargo, puedo decirte que es un libro de Ciencias Sociales escrito por Honor Arundel.
+Predicha: Dos buenos libros de arte: La libertad en el arte de Honor Arundel y El arte del siglo XX de Alfred Barr.
+
+rouge1:
+  Precision: 0.3182
+  Recall: 0.3889
+  F1: 0.3500
+
+rouge2:
+  Precision: 0.2381
+  Recall: 0.2941
+  F1: 0.2632
+
+rougeL:
+  Precision: 0.3182
+  Recall: 0.3889
+  F1: 0.3500
+--------------------------------------------------
+
+Evaluación de respuesta 27:
+Real: El libro "Las cartas de San Francisco Javier" ofrece una perspectiva simbólica y eficaz de la actividad misionera de San Francisco Javier, a pesar de que nunca llegó a América. La obra se refiere al emblema Somnium Xaverii de subsidio Indis ferendo publicado en 1640, que metafóricamente muestra la llegada de San Francisco a América a través de un sueño. El libro destacan los pasos y gestos de San Francisco como marcas para una ruta de conversión religiosa y transmite un mensaje heroico para el futuro. Además, comparte con el relato clásico de Eneas que llevaba entre sus brazos a su padre Anquises, donde se describe al joven como el fundador de un nuevo linaje.
+Predicha: Este libro presenta simbólicamente las misiones de San Francisco Javier. Aunque no llegó a América, el libro usa un emblema publicado en 1640 que lo muestra soñando con ese viaje. Es un relato con tintes heroicos y religiosos, muy influenciado por símbolos clásicos como Eneas llevando a su padre.
+
+rouge1:
+  Precision: 0.6111
+  Recall: 0.2661
+  F1: 0.3708
+
+rouge2:
+  Precision: 0.2453
+  Recall: 0.1057
+  F1: 0.1477
+
+rougeL:
+  Precision: 0.4630
+  Recall: 0.2016
+  F1: 0.2809
+--------------------------------------------------
+
+Evaluación de respuesta 28:
+Real: El libro "Las cartas de San Francisco Javier" ofrece una perspectiva simbólica y eficaz de la actividad misionera de San Francisco Javier, a pesar de que nunca llegó a América. La obra se refiere al emblema Somnium Xaverii de subsidio Indis ferendo publicado en 1640, que metafóricamente muestra la llegada de San Francisco a América a través de un sueño. El libro destacan los pasos y gestos de San Francisco como marcas para una ruta de conversión religiosa y transmite un mensaje heroico para el futuro. Además, comparte con el relato clásico de Eneas que llevaba entre sus brazos a su padre Anquises, donde se describe al joven como el fundador de un nuevo linaje.
+Predicha: El libro "Las cartas de San Francisco Javier" ofrece una perspectiva simbólica y eficaz de la actividad misionera de San Francisco Javier, a pesar de que nunca llegó a América. La obra se refiere al emblema Somnium Xaverii de subsidio Indis ferendo publicado en 1640, que metafóricamente muestra la llegada de San Francisco a América a través de un sueño. El libro destacan los pasos y gestos de San Francisco como marcas para una ruta de conversión religiosa y transmite un mensaje heroico para el futuro. Además, comparte con el relato clásico de Eneas que llevaba entre sus brazos a su padre Anquises, donde se describe al joven como el fundador de un nuevo linaje.
+
+rouge1:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rouge2:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+
+rougeL:
+  Precision: 1.0000
+  Recall: 1.0000
+  F1: 1.0000
+--------------------------------------------------
+
+Evaluación de respuesta 29:
+Real: El libro "Las cartas de San Francisco Javier" ofrece una perspectiva simbólica y eficaz de la actividad misionera de San Francisco Javier, a pesar de que nunca llegó a América. La obra se refiere al emblema Somnium Xaverii de subsidio Indis ferendo publicado en 1640, que metafóricamente muestra la llegada de San Francisco a América a través de un sueño. El libro destacan los pasos y gestos de San Francisco como marcas para una ruta de conversión religiosa y transmite un mensaje heroico para el futuro. Además, comparte con el relato clásico de Eneas que llevaba entre sus brazos a su padre Anquises, donde se describe al joven como el fundador de un nuevo linaje.
+Predicha: Este libro presenta simbólicamente las misiones de San Francisco Javier. Aunque no llegó a América, el libro usa un emblema publicado en 1640 que lo muestra soñando con ese viaje. Es un relato con tintes heroicos y religiosos, muy influenciado por símbolos clásicos como Eneas llevando a su padre.
+
+rouge1:
+  Precision: 0.6111
+  Recall: 0.2661
+  F1: 0.3708
+
+rouge2:
+  Precision: 0.2453
+  Recall: 0.1057
+  F1: 0.1477
+
+rougeL:
+  Precision: 0.4630
+  Recall: 0.2016
+  F1: 0.2809
+--------------------------------------------------
+
+PROMEDIOS GENERALES:
+==================================================
+
+rouge1:
+  Precision promedio: 0.6300
+  Recall promedio: 0.5540
+  F1 promedio: 0.5668
+
+rouge2:
+  Precision promedio: 0.4957
+  Recall promedio: 0.4423
+  F1 promedio: 0.4557
+
+rougeL:
+  Precision promedio: 0.5919
+  Recall promedio: 0.5216
+  F1 promedio: 0.5360
