@@ -68,5 +68,5 @@ class LibrosController extends Controller {
         }
     }
 
-    // We will add methods for editing, and deleting later
+    
 } 

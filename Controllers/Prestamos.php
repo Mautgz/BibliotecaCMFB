@@ -107,16 +107,16 @@ class Prestamos extends Controller
             $pdf->SetFont('Arial', 'B', 12);
             $pdf->Cell(195, 5, mb_convert_encoding($datos['nombre'], 'ISO-8859-1', 'UTF-8'), 0, 1, 'C');
 
-            // Logo
+            // Fecha de creación (más arriba)
+            $pdf->SetFont('Arial', '', 10);
+            $pdf->SetXY(150, 8);
+            $pdf->Cell(50, 5, 'Fecha: ' . date('d/m/Y'), 0, 1, 'R');
+
+            // Logo (más abajo)
             $logo_path = $_SERVER['DOCUMENT_ROOT'] . '/biblio/Assets/img/logo.png';
             if (file_exists($logo_path)) {
-                $pdf->Image($logo_path, 180, 10, 30, 30, 'PNG');
+                $pdf->Image($logo_path, 180, 15, 30, 30, 'PNG');
             }
-
-            // Fecha de creación
-            $pdf->SetFont('Arial', '', 10);
-            $pdf->SetXY(150, 15);
-            $pdf->Cell(50, 5, 'Fecha: ' . date('d/m/Y'), 0, 1, 'R');
 
             // Información de contacto
             $pdf->SetFont('Arial', 'B', 10);
@@ -134,7 +134,8 @@ class Prestamos extends Controller
             $pdf->SetFont('Arial', '', 10);
             $pdf->Cell(20, 5, mb_convert_encoding($datos['correo'], 'ISO-8859-1', 'UTF-8'), 0, 1, 'L');
             
-            $pdf->Ln();
+            // Salto de línea antes de la tabla
+            $pdf->Ln(15);
 
             // Tabla de préstamos
             $pdf->SetFont('Arial', 'B', 10);
@@ -143,26 +144,24 @@ class Prestamos extends Controller
             $pdf->Cell(196, 7, mb_convert_encoding("Detalle de Préstamos", 'ISO-8859-1', 'UTF-8'), 1, 1, 'C', 1);
             // Encabezados de la tabla
             $pdf->SetTextColor(0, 0, 0);
-            $pdf->Cell(14, 7, mb_convert_encoding('N°', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-            $pdf->Cell(25, 7, mb_convert_encoding('ID Estudiante', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-            $pdf->Cell(25, 7, mb_convert_encoding('ID Libro', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-            $pdf->Cell(35, 7, mb_convert_encoding('Fecha Préstamo', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-            $pdf->Cell(35, 7, mb_convert_encoding('Fecha Devolución', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-            $pdf->Cell(15, 7, mb_convert_encoding('Cant.', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-            $pdf->Cell(40, 7, mb_convert_encoding('Observación', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-            $pdf->Cell(20, 7, mb_convert_encoding('Estado', 'ISO-8859-1', 'UTF-8'), 1, 1, 'L');
+            $pdf->Cell(12, 7, mb_convert_encoding('N°', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
+            $pdf->Cell(35, 7, mb_convert_encoding('Estudiante', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
+            $pdf->Cell(45, 7, mb_convert_encoding('Libro', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
+            $pdf->Cell(22, 7, mb_convert_encoding('F.Préstamo', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
+            $pdf->Cell(22, 7, mb_convert_encoding('F.Dev.', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
+            $pdf->Cell(12, 7, mb_convert_encoding('Cant.', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
+            $pdf->Cell(48, 7, mb_convert_encoding('Observación', 'ISO-8859-1', 'UTF-8'), 1, 1, 'L');
             // Datos de préstamos
-            $pdf->SetFont('Arial', '', 10);
+            $pdf->SetFont('Arial', '', 8);
             $contador = 1;
             foreach ($prestamo as $row) {
-                $pdf->Cell(14, 7, $contador, 1, 0, 'L');
-                $pdf->Cell(25, 7, isset($row['id_estudiante']) ? $row['id_estudiante'] : '', 1, 0, 'L');
-                $pdf->Cell(25, 7, isset($row['id_libro']) ? $row['id_libro'] : '', 1, 0, 'L');
-                $pdf->Cell(35, 7, isset($row['fecha_prestamo']) ? $row['fecha_prestamo'] : '', 1, 0, 'L');
-                $pdf->Cell(35, 7, isset($row['fecha_devolucion']) ? $row['fecha_devolucion'] : '', 1, 0, 'L');
-                $pdf->Cell(15, 7, isset($row['cantidad']) ? $row['cantidad'] : '', 1, 0, 'L');
-                $pdf->Cell(40, 7, isset($row['observacion']) ? mb_convert_encoding($row['observacion'], 'ISO-8859-1', 'UTF-8') : '', 1, 0, 'L');
-                $pdf->Cell(20, 7, (isset($row['estado']) && $row['estado'] == 1) ? 'Activo' : 'Inactivo', 1, 1, 'L');
+                $pdf->Cell(12, 7, $contador, 1, 0, 'L');
+                $pdf->Cell(35, 7, mb_convert_encoding(substr($row['nombre'], 0, 20), 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
+                $pdf->Cell(45, 7, mb_convert_encoding(substr($row['titulo'], 0, 25), 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
+                $pdf->Cell(22, 7, isset($row['fecha_prestamo']) ? $row['fecha_prestamo'] : '', 1, 0, 'L');
+                $pdf->Cell(22, 7, isset($row['fecha_devolucion']) ? $row['fecha_devolucion'] : '', 1, 0, 'L');
+                $pdf->Cell(12, 7, isset($row['cantidad']) ? $row['cantidad'] : '', 1, 0, 'L');
+                $pdf->Cell(48, 7, isset($row['observacion']) ? mb_convert_encoding(substr($row['observacion'], 0, 30), 'ISO-8859-1', 'UTF-8') : '', 1, 1, 'L');
                 $contador++;
             }
 
@@ -231,7 +230,7 @@ class Prestamos extends Controller
         $pdf->Cell(72, 5, "Estudiante", 1, 1, 'C', 1);
         $pdf->SetTextColor(0, 0, 0);
         $pdf->Cell(35, 5, 'Nombre', 1, 0, 'L');
-        $pdf->Cell(37, 5, 'Año', 1, 1, 'L');
+        $pdf->Cell(37, 5, iconv('UTF-8', 'ISO-8859-1', 'Año'), 1, 1, 'L');
         $pdf->SetFont('Arial', '', 8);
         $pdf->Cell(35, 5, iconv('UTF-8', 'ISO-8859-1', $prestamo['nombre']), 1, 0, 'L');
         $pdf->Cell(37, 5, $prestamo['año'], 1, 1, 'L');
@@ -240,6 +239,12 @@ class Prestamos extends Controller
         $pdf->Cell(72, 5, 'Fecha Prestamo', 0, 1, 'C');
         $pdf->SetFont('Arial', '', 10);
         $pdf->Cell(72, 5, $prestamo['fecha_prestamo'], 0, 1, 'C');
+        
+        $pdf->Ln();
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->Cell(72, 5, iconv('UTF-8', 'ISO-8859-1', 'Fecha Devolución'), 0, 1, 'C');
+        $pdf->SetFont('Arial', '', 10);
+        $pdf->Cell(72, 5, $prestamo['fecha_devolucion'], 0, 1, 'C');
         
         $pdf->Output('I', 'prestamos.pdf');
         exit;

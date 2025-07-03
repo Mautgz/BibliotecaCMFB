@@ -36,6 +36,12 @@ class PublicLibros extends Controller
         // Add base_url to the data array
         $data['base_url'] = base_url;
 
+        if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
+            // Renderizar solo la lista de libros (parcial)
+            $this->views->getView($this, "public_libros_list", $data);
+            return;
+        }
+
         $this->views->getView($this, "public_libros", $data);
     }
 }

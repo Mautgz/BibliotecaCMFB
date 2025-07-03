@@ -32,6 +32,26 @@ db_config = {
 CACHE_DIR = os.path.join(os.path.dirname(__file__), 'cache')
 os.makedirs(CACHE_DIR, exist_ok=True)
 
+def convertir_tiempo_ns_a_segundos(nanosegundos):
+    """Convierte nanosegundos a segundos con formato legible"""
+    return nanosegundos / 1_000_000_000
+
+def mostrar_logs_tiempo_ollama(response_data):
+    """Muestra los logs de tiempo de Ollama en formato legible"""
+    if 'total_duration' in response_data:
+        total_sec = convertir_tiempo_ns_a_segundos(response_data['total_duration'])
+        load_sec = convertir_tiempo_ns_a_segundos(response_data.get('load_duration', 0))
+        prompt_eval_sec = convertir_tiempo_ns_a_segundos(response_data.get('prompt_eval_duration', 0))
+        eval_sec = convertir_tiempo_ns_a_segundos(response_data.get('eval_duration', 0))
+        
+        print(f"[DEBUG] Tiempos de Ollama (segundos):")
+        print(f"  - Total: {total_sec:.2f}s")
+        print(f"  - Carga: {load_sec:.2f}s")
+        print(f"  - Evaluación prompt: {prompt_eval_sec:.2f}s")
+        print(f"  - Evaluación: {eval_sec:.2f}s")
+        print(f"  - Prompts evaluados: {response_data.get('prompt_eval_count', 0)}")
+        print(f"  - Evaluaciones: {response_data.get('eval_count', 0)}")
+
 def registrar_log(query, respuesta, tiempo_respuesta):
     try:
         conn = mysql.connector.connect(**db_config)
@@ -164,8 +184,12 @@ Instrucciones:
                                })
         print("[DEBUG] Status code de Ollama:", response.status_code)
         if response.status_code == 200:
-            print("[DEBUG] Respuesta de Ollama:", response.json())
-            return response.json().get('response', '')
+            response_data = response.json()
+            
+            # Mostrar logs de tiempo en formato legible
+            mostrar_logs_tiempo_ollama(response_data)
+            
+            return response_data.get('response', '')
         print("[DEBUG] Ollama no devolvió 200:", response.text)
         return None
     except Exception as e:
@@ -296,9 +320,12 @@ def generar_respuesta_ollama(prompt, model='mistral', libros_encontrados=None):
                 # Verificar si el libro existe en la base de datos
                 if libro.get('id') is not None:
                     estado = 'Disponible' if int(libro.get('cantidad', 0)) > 0 else 'No disponible'
+                    ubicacion = libro.get('ubicacion')
+                    if not ubicacion or not isinstance(ubicacion, str) or ubicacion.strip() == '':
+                        ubicacion = 'No especificada'
                     libros_info.append(
                         f"- {libro['titulo']} de {libro.get('autor_personal', 'Autor desconocido')} "
-                        f"(Ubicación: {libro.get('ubicacion', 'No especificada')}, "
+                        f"(Ubicación: {ubicacion}, "
                         f"Estado: {estado})"
                     )
                 else:
@@ -308,22 +335,51 @@ def generar_respuesta_ollama(prompt, model='mistral', libros_encontrados=None):
                     )
             
             libros_texto = "\n".join(libros_info)
-            prompt = f"{prompt}\n\nInformación de libros:\n{libros_texto}"
+            
+            # Prompt más restrictivo para evitar que el modelo invente información
+            prompt_restrictivo = f"""
+{prompt}
+
+IMPORTANTE: Solo puedes mencionar y recomendar los siguientes libros que están disponibles en nuestra biblioteca. NO inventes ni menciones otros libros que no estén en esta lista:
+
+{libros_texto}
+
+Instrucciones:
+1. Solo menciona los libros de la lista anterior
+2. NO inventes títulos, autores, ubicaciones o información que no esté en la lista
+3. Si no hay libros relevantes en la lista, di que no tienes libros sobre ese tema
+4. Usa exactamente la información proporcionada (título, autor, ubicación, estado)
+5. No agregues información adicional que no esté en los datos proporcionados
+"""
+        else:
+            # Si no hay libros encontrados, ser muy claro sobre esto
+            prompt_restrictivo = f"""
+{prompt}
+
+IMPORTANTE: No tengo libros en mi base de datos que coincidan con tu consulta. 
+No puedo recomendarte libros que no están disponibles en nuestra biblioteca.
+Por favor, intenta con otros términos de búsqueda o consulta nuestro catálogo completo.
+"""
         
         # Llamar a la API de Ollama
         response = requests.post(
             'http://localhost:11434/api/generate',
             json={
                 'model': model,
-                'prompt': prompt,
+                'prompt': prompt_restrictivo,
                 'max_tokens': 500,
-                'temperature': 0.7,
+                'temperature': 0.3,  # Reducir temperatura para respuestas más consistentes
                 'stream': False
             }
         )
         
         if response.status_code == 200:
-            return response.json()['response']
+            response_data = response.json()
+            
+            # Mostrar logs de tiempo en formato legible
+            mostrar_logs_tiempo_ollama(response_data)
+            
+            return response_data['response']
         else:
             return "Lo siento, no pude procesar tu solicitud en este momento."
             
@@ -535,6 +591,9 @@ def buscar_libros_similares(libro_actual, books):
     autor_actual = libro_actual.get('autor_personal', '').lower()
     titulo_actual = libro_actual.get('titulo', '').lower()
     
+    # Extraer palabras clave importantes del título (palabras de más de 4 caracteres)
+    palabras_clave_titulo = [palabra for palabra in titulo_actual.split() if len(palabra) > 4]
+    
     similares = []
     for libro in books:
         # Skip the same book
@@ -557,33 +616,55 @@ def buscar_libros_similares(libro_actual, books):
             
         # Calcular puntuación de similitud
         puntuacion = 0
+        titulo_libro = libro.get('titulo', '').lower()
+        materia_libro = libro.get('materia', '').lower()
+        autor_libro = libro.get('autor_personal', '').lower()
         
-        # Misma materia (+3 puntos)
-        if libro.get('materia', '').lower() == materia_actual:
+        # Misma materia (+5 puntos)
+        if materia_libro == materia_actual and materia_actual:
+            puntuacion += 5
+            
+        # Mismo autor (+3 puntos)
+        if autor_libro == autor_actual and autor_actual:
             puntuacion += 3
             
-        # Mismo autor (+2 puntos)
-        if libro.get('autor_personal', '').lower() == autor_actual:
-            puntuacion += 2
-            
-        # Palabras clave similares en el título (+1 punto por palabra)
+        # Palabras clave del título en el título del libro (+2 puntos por palabra)
+        for palabra_clave in palabras_clave_titulo:
+            if palabra_clave in titulo_libro:
+                puntuacion += 2
+                
+        # Palabras clave del título en la materia del libro (+1 punto por palabra)
+        for palabra_clave in palabras_clave_titulo:
+            if palabra_clave in materia_libro:
+                puntuacion += 1
+                
+        # Palabras clave del título en la descripción del libro (+1 punto por palabra)
+        descripcion_libro = libro.get('descripcion', '').lower()
+        for palabra_clave in palabras_clave_titulo:
+            if palabra_clave in descripcion_libro:
+                puntuacion += 1
+        
+        # Coincidencias de palabras comunes en el título (+1 punto por palabra)
         palabras_titulo_actual = set(titulo_actual.split())
-        palabras_titulo_libro = set(libro.get('titulo', '').lower().split())
+        palabras_titulo_libro = set(titulo_libro.split())
         palabras_comunes = palabras_titulo_actual.intersection(palabras_titulo_libro)
         puntuacion += len(palabras_comunes)
         
+        # Si hay alguna puntuación, agregar el libro
         if puntuacion > 0:
             similares.append((libro, puntuacion))
     
-    # Ordenar por puntuación y tomar los 3 más similares
+    # Ordenar por puntuación y tomar los 5 más similares
     similares.sort(key=lambda x: x[1], reverse=True)
-    return [libro for libro, _ in similares[:3]]
+    return [libro for libro, _ in similares[:5]]
 
 def es_consulta_sugerencias(texto):
     sugerencias_keywords = [
         "similar", "parecido", "recomienda", "sugiere", "como este",
         "otros como", "más como", "algo como", "algo parecido",
-        "recomendación", "sugerencia"
+        "recomendación", "sugerencia", "similar a", "parecido a",
+        "libros similares", "libros parecidos", "recomiéndame",
+        "sugiéreme", "me recomiendas", "me sugieres"
     ]
     texto = texto.lower()
     return any(keyword in texto for keyword in sugerencias_keywords)
@@ -811,6 +892,10 @@ def buscar_libros():
         if es_pregunta_resumen(query):
             return procesar_pregunta_resumen(query, books)
         
+        # Verificar si es una consulta sobre libros similares
+        if es_consulta_sugerencias(query):
+            return procesar_consulta_similares(query, books)
+        
         # Verificar si es una pregunta sobre la ubicación
         if es_pregunta_ubicacion(query):
             return procesar_pregunta_ubicacion(query, books)
@@ -871,8 +956,12 @@ def procesar_pregunta_ubicacion(query, books):
     # Primero intentar encontrar el libro específico
     libro_encontrado = buscar_libro_por_titulo_parcial(query, books)
     if libro_encontrado:
+        ubicacion = libro_encontrado.get('ubicacion', '')
+        if not ubicacion or not isinstance(ubicacion, str) or ubicacion.strip() == '':
+            ubicacion = 'No especificada'
+        
         return jsonify({
-            'respuesta': f"El libro '{libro_encontrado.get('titulo', '')}' se encuentra en el estante {libro_encontrado.get('estante', '')}.",
+            'respuesta': f"El libro '{libro_encontrado.get('titulo', '')}' se encuentra en: {ubicacion}.",
             'libros': [libro_encontrado]
         })
     
@@ -881,10 +970,24 @@ def procesar_pregunta_ubicacion(query, books):
     if tema:
         libros_tema = [libro for libro in books if tema.lower() in libro.get('materia', '').lower()]
         if libros_tema:
-            return jsonify({
-                'respuesta': f"Los libros sobre {tema} se encuentran en los estantes {', '.join(set(libro.get('estante', '') for libro in libros_tema))}.",
-                'libros': libros_tema
-            })
+            # Obtener ubicaciones únicas de los libros del tema
+            ubicaciones = []
+            for libro in libros_tema:
+                ubicacion = libro.get('ubicacion', '')
+                if ubicacion and isinstance(ubicacion, str) and ubicacion.strip() != '':
+                    ubicaciones.append(ubicacion)
+            
+            if ubicaciones:
+                ubicaciones_unicas = list(set(ubicaciones))
+                return jsonify({
+                    'respuesta': f"Los libros sobre {tema} se encuentran en: {', '.join(ubicaciones_unicas)}.",
+                    'libros': libros_tema
+                })
+            else:
+                return jsonify({
+                    'respuesta': f"He encontrado libros sobre {tema}, pero no tengo información específica sobre su ubicación.",
+                    'libros': libros_tema
+                })
     
     return jsonify({
         'respuesta': "Lo siento, no pude encontrar información sobre la ubicación que buscas. ¿Podrías ser más específico?",
@@ -1077,6 +1180,52 @@ def procesar_pregunta_resumen(query, books):
     
     # Si no se encuentra el libro, intentar búsqueda general
     return procesar_busqueda_general(query, books)
+
+def procesar_consulta_similares(query, books):
+    """Procesa una consulta sobre libros similares"""
+    # Primero intentar encontrar el libro de referencia
+    libro_referencia = buscar_libro_por_titulo_parcial(query, books)
+    
+    if not libro_referencia:
+        return jsonify({
+            'respuesta': "No encontré el libro de referencia en nuestra biblioteca. ¿Podrías verificar el título o intentar con otro libro?",
+            'libros': []
+        })
+    
+    # Buscar libros similares
+    libros_similares = buscar_libros_similares(libro_referencia, books)
+    
+    if not libros_similares:
+        return jsonify({
+            'respuesta': f"No encontré libros similares a '{libro_referencia.get('titulo', '')}' en nuestra biblioteca. Te sugiero consultar nuestro catálogo completo para encontrar otros libros sobre el mismo tema.",
+            'libros': [libro_referencia]
+        })
+    
+    # Generar respuesta con los libros similares encontrados
+    respuesta = f"Basándome en '{libro_referencia.get('titulo', '')}', te recomiendo estos libros similares que están disponibles en nuestra biblioteca:\n\n"
+    
+    for i, libro in enumerate(libros_similares, 1):
+        ubicacion = libro.get('ubicacion', '')
+        if not ubicacion or not isinstance(ubicacion, str) or ubicacion.strip() == '':
+            ubicacion = 'No especificada'
+        
+        estado = 'Disponible' if int(libro.get('cantidad', 0)) > 0 else 'No disponible'
+        
+        respuesta += f"{i}. {libro.get('titulo', '')}\n"
+        respuesta += f"   Autor: {libro.get('autor_personal', 'Autor desconocido')}\n"
+        respuesta += f"   Ubicación: {ubicacion}\n"
+        respuesta += f"   Estado: {estado}\n"
+        if libro.get('materia'):
+            respuesta += f"   Materia: {libro.get('materia')}\n"
+        respuesta += "\n"
+    
+    # Incluir el libro de referencia también en la respuesta
+    todos_libros = [libro_referencia] + libros_similares
+    
+    return jsonify({
+        'respuesta': respuesta,
+        'libros': todos_libros
+    })
 
 if __name__ == '__main__':
     print("Iniciando servidor Flask...")

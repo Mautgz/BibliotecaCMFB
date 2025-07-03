@@ -1169,3 +1169,245 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
+function buscarPorFecha() {
+    const fecha = document.getElementById("fecha").value;
+    if (fecha == '') {
+        alertas('Seleccione una fecha', 'warning');
+    } else {
+        const url = base_url + "Prestamos/buscarPorFecha";
+        const http = new XMLHttpRequest();
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.send("fecha=" + fecha);
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                const res = JSON.parse(this.responseText);
+                if (res.length > 0) {
+                    let html = '';
+                    res.forEach(prestamo => {
+                        html += `
+                        <tr>
+                            <td>${prestamo.nombre} ${prestamo.apellido}</td>
+                            <td>${prestamo.titulo}</td>
+                            <td>${prestamo.fecha_prestamo}</td>
+                            <td>${prestamo.fecha_devolucion}</td>
+                            <td>${prestamo.estado}</td>
+                        </tr>
+                        `;
+                    });
+                    document.getElementById("tblPrestamos").innerHTML = html;
+                } else {
+                    document.getElementById("tblPrestamos").innerHTML = '<tr><td colspan="5" class="text-center">No hay préstamos para esta fecha</td></tr>';
+                }
+            }
+        }
+    }
+}
+
+// ========== FUNCIONES PARA ESCÁNER ISBN Y TÍTULO ==========
+
+function escanearLibro() {
+    document.getElementById("isbn_input").value = "";
+    document.getElementById("titulo_input").value = "";
+    document.getElementById("resultado_busqueda").style.display = "none";
+    document.getElementById("sin_resultados").style.display = "none";
+    document.getElementById("camara_container").style.display = "none";
+    document.getElementById("modo_busqueda").value = "isbn";
+    alternarModoBusqueda();
+    $("#escanearLibro").modal("show");
+    document.getElementById("isbn_input").focus();
+}
+
+function alternarModoBusqueda() {
+    const modo = document.getElementById("modo_busqueda").value;
+    if (modo === "isbn") {
+        document.getElementById("isbn_group").style.display = "block";
+        document.getElementById("titulo_group").style.display = "none";
+        document.getElementById("btn_buscar_isbn").style.display = "inline-block";
+        document.getElementById("btn_buscar_titulo").style.display = "none";
+        document.getElementById("isbn_input").focus();
+    } else {
+        document.getElementById("isbn_group").style.display = "none";
+        document.getElementById("titulo_group").style.display = "block";
+        document.getElementById("btn_buscar_isbn").style.display = "none";
+        document.getElementById("btn_buscar_titulo").style.display = "inline-block";
+        document.getElementById("titulo_input").focus();
+    }
+}
+
+function buscarPorISBN() {
+    const isbn = document.getElementById("isbn_input").value.trim();
+    if (isbn === '') {
+        alertas('Por favor ingrese un ISBN', 'warning');
+        return;
+    }
+    document.getElementById("resultado_busqueda").style.display = "none";
+    document.getElementById("sin_resultados").style.display = "none";
+    const url = base_url + "Libros/buscarPorISBN";
+    const http = new XMLHttpRequest();
+    http.open("POST", url, true);
+    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    http.send("isbn=" + encodeURIComponent(isbn));
+    http.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            try {
+                const res = JSON.parse(this.responseText);
+                if (res.success) {
+                    mostrarResultadoBusqueda(res.data);
+                } else {
+                    document.getElementById("sin_resultados").style.display = "block";
+                }
+            } catch (e) {
+                document.getElementById("sin_resultados").style.display = "block";
+            }
+        }
+    }
+}
+
+function buscarPorTitulo() {
+    const titulo = document.getElementById("titulo_input").value.trim();
+    if (titulo === '') {
+        alertas('Por favor ingrese un título', 'warning');
+        return;
+    }
+    document.getElementById("resultado_busqueda").style.display = "none";
+    document.getElementById("sin_resultados").style.display = "none";
+    const url = base_url + "Libros/buscarPorTitulo";
+    const http = new XMLHttpRequest();
+    http.open("POST", url, true);
+    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    http.send("titulo=" + encodeURIComponent(titulo));
+    http.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            try {
+                const res = JSON.parse(this.responseText);
+                if (res.success) {
+                    mostrarResultadoBusqueda(res.data);
+                } else {
+                    document.getElementById("sin_resultados").style.display = "block";
+                }
+            } catch (e) {
+                document.getElementById("sin_resultados").style.display = "block";
+            }
+        }
+    }
+}
+
+function mostrarResultadoBusqueda(libro) {
+    document.getElementById("titulo_encontrado").value = libro.titulo || '';
+    document.getElementById("autor_encontrado").value = libro.autor || '';
+    document.getElementById("editorial_encontrada").value = libro.editorial || '';
+    document.getElementById("anio_encontrado").value = libro.anio || '';
+    document.getElementById("descripcion_encontrada").value = libro.descripcion || '';
+    
+    if (libro.portada) {
+        document.getElementById("portada_libro").src = libro.portada;
+        document.getElementById("portada_libro").style.display = "block";
+    } else {
+        document.getElementById("portada_libro").style.display = "none";
+    }
+    
+    document.getElementById("resultado_busqueda").style.display = "block";
+}
+
+function usarInformacionEncontrada() {
+    // Cerrar modal de escáner
+    $("#escanearLibro").modal("hide");
+    
+    // Abrir modal de nuevo libro y llenar con la información encontrada
+    frmLibros();
+    
+    // Llenar los campos con la información encontrada
+    document.getElementById("titulo").value = document.getElementById("titulo_encontrado").value;
+    document.getElementById("autor_personal").value = document.getElementById("autor_encontrado").value;
+    document.getElementById("editorial").value = document.getElementById("editorial_encontrada").value;
+    document.getElementById("descripcion").value = document.getElementById("descripcion_encontrada").value;
+    
+    // Si hay año, convertirlo a formato de fecha
+    const anio = document.getElementById("anio_encontrado").value;
+    if (anio) {
+        document.getElementById("anio_edicion").value = anio + "-01-01";
+    }
+    
+    // Usar el ISBN como código del libro
+    const isbn = document.getElementById("isbn_input").value;
+    document.getElementById("codigo_libro").value = isbn;
+    
+    alertas('Información del libro cargada. Complete los campos restantes y guarde.', 'success');
+}
+
+function limpiarBusqueda() {
+    document.getElementById("isbn_input").value = "";
+    document.getElementById("resultado_busqueda").style.display = "none";
+    document.getElementById("sin_resultados").style.display = "none";
+    document.getElementById("camara_container").style.display = "none";
+    document.getElementById("isbn_input").focus();
+}
+
+// Funciones para la cámara (opcional - requiere librería de códigos de barras)
+let stream = null;
+
+function activarCamara() {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            .then(function(mediaStream) {
+                stream = mediaStream;
+                const video = document.getElementById('video');
+                video.srcObject = mediaStream;
+                document.getElementById('camara_container').style.display = 'block';
+            })
+            .catch(function(error) {
+                alertas('No se pudo acceder a la cámara: ' + error.message, 'error');
+            });
+    } else {
+        alertas('Tu navegador no soporta acceso a la cámara', 'warning');
+    }
+}
+
+function cerrarCamara() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+    document.getElementById('camara_container').style.display = 'none';
+}
+
+function capturarCodigo() {
+    // Esta función requeriría una librería como QuaggaJS o ZXing para decodificar códigos de barras
+    // Por ahora, solo captura la imagen
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0);
+    
+    alertas('Imagen capturada. Para decodificar códigos de barras se requiere una librería adicional.', 'info');
+}
+
+// Event listener para detectar cuando se presiona Enter en el campo ISBN o Título
+
+document.addEventListener('DOMContentLoaded', function() {
+    const isbnInput = document.getElementById('isbn_input');
+    if (isbnInput) {
+        isbnInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarPorISBN();
+            }
+        });
+    }
+    const tituloInput = document.getElementById('titulo_input');
+    if (tituloInput) {
+        tituloInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarPorTitulo();
+            }
+        });
+    }
+    const modoBusqueda = document.getElementById('modo_busqueda');
+    if (modoBusqueda) {
+        modoBusqueda.addEventListener('change', alternarModoBusqueda);
+    }
+});

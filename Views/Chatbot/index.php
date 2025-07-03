@@ -22,7 +22,7 @@ require_once 'Views/header.php';
                             <form id="chatForm" class="d-flex">
                                 <input type="text" id="userInput" class="form-control" placeholder="Escribe tu pregunta aquí...">
                                 <button type="submit" class="btn btn-primary ms-2">
-                                    <i class="fas fa-paper-plane"></i>
+                                    <i class="fa fa-paper-plane"></i>
                                 </button>
                             </form>
                         </div>

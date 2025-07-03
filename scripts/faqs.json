@@ -1,1 +1,1 @@
-[{"id":"2","pregunta":"donde estan los libros nuevos?","respuesta":"estan en el estante mas alejado por la puerta al fondo de la biblioteca","patron_regex":"ubicacion de libros nuevos"}]
+[{"id":"2","pregunta":"donde estan los libros nuevos?","respuesta":"estan en el estante mas alejado por la puerta al fondo de la biblioteca","patron_regex":"¿?d(ó|o)nde\\s+est(á|a)n\\s+(los\\s+)?libros\\s+nuevos\\??"}]

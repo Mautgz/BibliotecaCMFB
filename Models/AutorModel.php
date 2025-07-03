@@ -70,4 +70,12 @@ class AutorModel extends Query
         $data = $this->selectAll($sql);
         return $data;
     }
+    public function getAutorConLibros() {
+        $sql = "SELECT a.id, a.autor, a.imagen, a.estado, GROUP_CONCAT(l.titulo SEPARATOR ', ') AS libros
+                FROM autor a
+                LEFT JOIN autor_libro al ON a.id = al.autor_id
+                LEFT JOIN libro l ON al.libro_id = l.id
+                GROUP BY a.id, a.autor, a.imagen, a.estado";
+        return $this->selectAll($sql);
+    }
 }

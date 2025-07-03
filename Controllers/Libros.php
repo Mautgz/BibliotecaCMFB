@@ -318,55 +318,63 @@ class Libros extends Controller
             
             // Encabezado
             $pdf->SetFont('Arial', 'B', 12);
-            $pdf->Cell(195, 5, mb_convert_encoding($datos['nombre'], 'ISO-8859-1', 'UTF-8'), 0, 1, 'C');
+            $pdf->Cell(260, 7, mb_convert_encoding($datos['nombre'], 'ISO-8859-1', 'UTF-8'), 0, 1, 'C');
 
-            // Logo
+            // Logo 
             $logo_path = $_SERVER['DOCUMENT_ROOT'] . '/biblio/Assets/img/logo.png';
             if (file_exists($logo_path)) {
-                $pdf->Image(base_url . "Assets/img/logo.png", 180, 10, 30, 30, 'PNG');
+                $pdf->Image($logo_path, 240, 15, 30, 30, 'PNG');
             }
             // Fecha de creación
             $pdf->SetFont('Arial', '', 10);
-            $pdf->SetXY(150, 15);
+            $pdf->SetXY(200, 20);
             $pdf->Cell(50, 5, 'Fecha: ' . date('d/m/Y'), 0, 1, 'R');
 
             // Información de contacto
             $pdf->SetFont('Arial', 'B', 10);
-            $pdf->Cell(20, 5, mb_convert_encoding("Teléfono: ", 'ISO-8859-1', 'UTF-8'), 0, 0, 'L');
-            $pdf->Cell(20, 5, mb_convert_encoding($datos['telefono'], 'ISO-8859-1', 'UTF-8'), 0, 1, 'L');
-            $pdf->Cell(20, 5, mb_convert_encoding("Dirección: ", 'ISO-8859-1', 'UTF-8'), 0, 0, 'L');
-            $pdf->Cell(20, 5, mb_convert_encoding($datos['direccion'], 'ISO-8859-1', 'UTF-8'), 0, 1, 'L');
-            $pdf->Cell(20, 5, mb_convert_encoding($datos['correo'], 'ISO-8859-1', 'UTF-8'), 0, 1, 'L');
+            $pdf->Cell(25, 7, mb_convert_encoding("Teléfono: ", 'ISO-8859-1', 'UTF-8'), 0, 0, 'L');
+            $pdf->SetFont('Arial', '', 10);
+            $pdf->Cell(40, 7, mb_convert_encoding($datos['telefono'], 'ISO-8859-1', 'UTF-8'), 0, 1, 'L');
             
-            $pdf->Ln();
+            $pdf->SetFont('Arial', 'B', 10);
+            $pdf->Cell(25, 7, mb_convert_encoding("Dirección: ", 'ISO-8859-1', 'UTF-8'), 0, 0, 'L');
+            $pdf->SetFont('Arial', '', 10);
+            $pdf->Cell(80, 7, mb_convert_encoding($datos['direccion'], 'ISO-8859-1', 'UTF-8'), 0, 1, 'L');
+            
+            $pdf->SetFont('Arial', 'B', 10);
+            $pdf->Cell(25, 7, "Correo: ", 0, 0, 'L');
+            $pdf->SetFont('Arial', '', 10);
+            $pdf->Cell(80, 7, mb_convert_encoding($datos['correo'], 'ISO-8859-1', 'UTF-8'), 0, 1, 'L');
+            
+            $pdf->Ln(5);
 
-            // Tabla de libros
+            // Tabla de libros - optimizada para orientación apaisada
             $pdf->SetFont('Arial', 'B', 10);
             $pdf->SetFillColor(0, 0, 0);
             $pdf->SetTextColor(255, 255, 255);
-            $pdf->Cell(232, 7, mb_convert_encoding("Inventario de Libros", 'ISO-8859-1', 'UTF-8'), 1, 1, 'C', 1);
+            $pdf->Cell(260, 7, mb_convert_encoding("Inventario de Libros", 'ISO-8859-1', 'UTF-8'), 1, 1, 'C', 1);
             
-            // Encabezados de la tabla
+            // Encabezados de la tabla - ancho optimizado
             $pdf->SetTextColor(0, 0, 0);
             $pdf->Cell(12, 7, mb_convert_encoding('N°', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-            $pdf->Cell(70, 7, mb_convert_encoding('Título', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-            $pdf->Cell(45, 7, mb_convert_encoding('Autor', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-            $pdf->Cell(35, 7, mb_convert_encoding('Editorial', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
+            $pdf->Cell(80, 7, mb_convert_encoding('Título', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
+            $pdf->Cell(50, 7, mb_convert_encoding('Autor', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
+            $pdf->Cell(40, 7, mb_convert_encoding('Editorial', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
             $pdf->Cell(20, 7, mb_convert_encoding('Cantidad', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-            $pdf->Cell(30, 7, mb_convert_encoding('Ubicación', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-            $pdf->Cell(20, 7, mb_convert_encoding('Estado', 'ISO-8859-1', 'UTF-8'), 1, 1, 'L');
+            $pdf->Cell(35, 7, mb_convert_encoding('Ubicación', 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
+            $pdf->Cell(23, 7, mb_convert_encoding('Estado', 'ISO-8859-1', 'UTF-8'), 1, 1, 'L');
             
-            // Datos de libros
-            $pdf->SetFont('Arial', '', 10);
+            // Datos de libros - ancho optimizado
+            $pdf->SetFont('Arial', '', 8);
             $contador = 1;
             foreach ($libros as $row) {
                 $pdf->Cell(12, 7, $contador, 1, 0, 'L');
-                $pdf->Cell(70, 7, mb_convert_encoding($row['titulo'], 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-                $pdf->Cell(45, 7, mb_convert_encoding($row['autor_personal'], 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-                $pdf->Cell(35, 7, mb_convert_encoding($row['editorial'], 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-                $pdf->Cell(20, 7, $row['cantidad'], 1, 0, 'L');
-                $pdf->Cell(30, 7, mb_convert_encoding($row['ubicacion'], 'ISO-8859-1', 'UTF-8'), 1, 0, 'L');
-                $pdf->Cell(20, 7, $row['estado'] == 1 ? 'Activo' : 'Inactivo', 1, 1, 'L');
+                $pdf->Cell(80, 7, isset($row['titulo']) ? mb_convert_encoding(substr($row['titulo'], 0, 45), 'ISO-8859-1', 'UTF-8') : '', 1, 0, 'L');
+                $pdf->Cell(50, 7, isset($row['autor_personal']) ? mb_convert_encoding(substr($row['autor_personal'], 0, 28), 'ISO-8859-1', 'UTF-8') : '', 1, 0, 'L');
+                $pdf->Cell(40, 7, isset($row['editorial']) ? mb_convert_encoding(substr($row['editorial'], 0, 22), 'ISO-8859-1', 'UTF-8') : '', 1, 0, 'L');
+                $pdf->Cell(20, 7, isset($row['cantidad']) ? $row['cantidad'] : '', 1, 0, 'L');
+                $pdf->Cell(35, 7, isset($row['ubicacion']) ? mb_convert_encoding(substr($row['ubicacion'], 0, 20), 'ISO-8859-1', 'UTF-8') : '', 1, 0, 'L');
+                $pdf->Cell(23, 7, (isset($row['estado']) && $row['estado'] == 1) ? 'Activo' : 'Inactivo', 1, 1, 'L');
                 $contador++;
             }
 
@@ -380,6 +388,221 @@ class Libros extends Controller
             // Redirigir a página de error
             header('Location: ' . base_url . 'Configuracion/Error');
             exit;
+        }
+    }
+
+    public function buscarPorISBN()
+    {
+        try {
+            if (!isset($_POST['isbn'])) {
+                throw new Exception('ISBN no proporcionado');
+            }
+
+            $isbn = strClean($_POST['isbn']);
+            
+            // Limpiar el ISBN (remover guiones y espacios)
+            $isbn = preg_replace('/[^0-9X]/', '', strtoupper($isbn));
+            
+            if (empty($isbn)) {
+                throw new Exception('ISBN inválido');
+            }
+
+            // Buscar en múltiples APIs
+            $libro = $this->buscarEnGoogleBooks($isbn);
+            
+            if (!$libro) {
+                $libro = $this->buscarEnOpenLibrary($isbn);
+            }
+
+            if ($libro) {
+                echo json_encode([
+                    'success' => true,
+                    'data' => $libro
+                ], JSON_UNESCAPED_UNICODE);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'No se encontró información para este ISBN'
+                ], JSON_UNESCAPED_UNICODE);
+            }
+
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], JSON_UNESCAPED_UNICODE);
+        }
+        die();
+    }
+
+    private function buscarEnGoogleBooks($isbn)
+    {
+        try {
+            $url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" . urlencode($isbn) . "&langRestrict=es";
+            
+            $response = file_get_contents($url);
+            if ($response === false) {
+                return null;
+            }
+
+            $data = json_decode($response, true);
+            
+            if (isset($data['items']) && count($data['items']) > 0) {
+                $book = $data['items'][0]['volumeInfo'];
+                
+                return [
+                    'titulo' => $book['title'] ?? '',
+                    'autor' => isset($book['authors']) ? implode(', ', $book['authors']) : '',
+                    'editorial' => $book['publisher'] ?? '',
+                    'anio' => $book['publishedDate'] ?? '',
+                    'descripcion' => $book['description'] ?? '',
+                    'portada' => isset($book['imageLinks']['thumbnail']) ? $book['imageLinks']['thumbnail'] : null,
+                    'isbn' => $isbn
+                ];
+            }
+            
+            return null;
+        } catch (Exception $e) {
+            error_log("Error buscando en Google Books: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    private function buscarEnOpenLibrary($isbn)
+    {
+        try {
+            $url = "https://openlibrary.org/api/books?bibkeys=ISBN:" . urlencode($isbn) . "&format=json&jscmd=data";
+            
+            $response = file_get_contents($url);
+            if ($response === false) {
+                return null;
+            }
+
+            $data = json_decode($response, true);
+            
+            if (isset($data["ISBN:$isbn"])) {
+                $book = $data["ISBN:$isbn"];
+                
+                return [
+                    'titulo' => $book['title'] ?? '',
+                    'autor' => isset($book['authors']) ? implode(', ', array_column($book['authors'], 'name')) : '',
+                    'editorial' => isset($book['publishers']) ? implode(', ', array_column($book['publishers'], 'name')) : '',
+                    'anio' => isset($book['publish_date']) ? $book['publish_date'] : '',
+                    'descripcion' => isset($book['excerpts']) ? $book['excerpts'][0]['text'] : '',
+                    'portada' => isset($book['cover']['large']) ? $book['cover']['large'] : null,
+                    'isbn' => $isbn
+                ];
+            }
+            
+            return null;
+        } catch (Exception $e) {
+            error_log("Error buscando en Open Library: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function buscarPorTitulo()
+    {
+        try {
+            if (!isset($_POST['titulo'])) {
+                throw new Exception('Título no proporcionado');
+            }
+
+            $titulo = strClean($_POST['titulo']);
+            $titulo = trim($titulo);
+            if (empty($titulo)) {
+                throw new Exception('Título inválido');
+            }
+
+            // Buscar en múltiples APIs
+            $libro = $this->buscarEnGoogleBooksPorTitulo($titulo);
+            if (!$libro) {
+                $libro = $this->buscarEnOpenLibraryPorTitulo($titulo);
+            }
+
+            if ($libro) {
+                echo json_encode([
+                    'success' => true,
+                    'data' => $libro
+                ], JSON_UNESCAPED_UNICODE);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'No se encontró información para este título'
+                ], JSON_UNESCAPED_UNICODE);
+            }
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], JSON_UNESCAPED_UNICODE);
+        }
+        die();
+    }
+
+    private function buscarEnGoogleBooksPorTitulo($titulo)
+    {
+        try {
+            $url = "https://www.googleapis.com/books/v1/volumes?q=" . urlencode($titulo) . "&langRestrict=es";
+            $response = file_get_contents($url);
+            if ($response === false) {
+                return null;
+            }
+            $data = json_decode($response, true);
+            if (isset($data['items']) && count($data['items']) > 0) {
+                $book = $data['items'][0]['volumeInfo'];
+                $isbn = '';
+                if (isset($book['industryIdentifiers'])) {
+                    foreach ($book['industryIdentifiers'] as $id) {
+                        if ($id['type'] === 'ISBN_13' || $id['type'] === 'ISBN_10') {
+                            $isbn = $id['identifier'];
+                            break;
+                        }
+                    }
+                }
+                return [
+                    'titulo' => $book['title'] ?? '',
+                    'autor' => isset($book['authors']) ? implode(', ', $book['authors']) : '',
+                    'editorial' => $book['publisher'] ?? '',
+                    'anio' => $book['publishedDate'] ?? '',
+                    'descripcion' => $book['description'] ?? '',
+                    'portada' => isset($book['imageLinks']['thumbnail']) ? $book['imageLinks']['thumbnail'] : null,
+                    'isbn' => $isbn
+                ];
+            }
+            return null;
+        } catch (Exception $e) {
+            error_log("Error buscando en Google Books por título: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    private function buscarEnOpenLibraryPorTitulo($titulo)
+    {
+        try {
+            $url = "https://openlibrary.org/search.json?title=" . urlencode($titulo);
+            $response = file_get_contents($url);
+            if ($response === false) {
+                return null;
+            }
+            $data = json_decode($response, true);
+            if (isset($data['docs']) && count($data['docs']) > 0) {
+                $book = $data['docs'][0];
+                $isbn = isset($book['isbn'][0]) ? $book['isbn'][0] : '';
+                return [
+                    'titulo' => $book['title'] ?? '',
+                    'autor' => isset($book['author_name']) ? implode(', ', $book['author_name']) : '',
+                    'editorial' => isset($book['publisher']) ? implode(', ', $book['publisher']) : '',
+                    'anio' => $book['first_publish_year'] ?? '',
+                    'descripcion' => '', // OpenLibrary search API does not provide description
+                    'portada' => isset($book['cover_i']) ? 'https://covers.openlibrary.org/b/id/' . $book['cover_i'] . '-L.jpg' : null,
+                    'isbn' => $isbn
+                ];
+            }
+            return null;
+        } catch (Exception $e) {
+            error_log("Error buscando en Open Library por título: " . $e->getMessage());
+            return null;
         }
     }
 }

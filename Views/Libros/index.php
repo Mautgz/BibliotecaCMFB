@@ -5,9 +5,10 @@
     </div>
     <div>
         <button class="btn btn-primary mb-2" type="button" onclick="frmLibros()"><i class="fa fa-plus"></i></button>
+        <button class="btn btn-warning mb-2" type="button" onclick="escanearLibro()"><i class="fa fa-barcode"></i> Escanear ISBN</button>
         <button class="btn btn-success mb-2" type="button" onclick="importarExcel()"><i class="fa fa-file-excel-o"></i> Importar Excel</button>
         <a href="<?php echo base_url; ?>Plantillas/generarPlantillaLibros" class="btn btn-info mb-2">
-            <i class="fas fa-download"></i> Descargar Plantilla
+            <i class="fa fa-download"></i> Descargar Plantilla
         </a>
     </div>
 </div>
@@ -184,6 +185,112 @@
                         <button class="btn btn-danger" type="button" data-dismiss="modal">Cancelar</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para escanear Libro (ISBN o Título) -->
+<div id="escanearLibro" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="my-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title text-white" id="title">Escanear o Buscar Libro</h5>
+                <button class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="modo_busqueda">Buscar por:</label>
+                            <select class="form-control" id="modo_busqueda">
+                                <option value="isbn">ISBN</option>
+                                <option value="titulo">Título</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="isbn_group">
+                            <label for="isbn_input">ISBN o Código de Barras</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="isbn_input" placeholder="Escanear o escribir ISBN">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="activarCamara()">
+                                        <i class="fa fa-camera"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Escribe el ISBN o usa el escáner de cámara</small>
+                        </div>
+                        <div class="form-group" id="titulo_group" style="display:none;">
+                            <label for="titulo_input">Título del Libro</label>
+                            <input type="text" class="form-control" id="titulo_input" placeholder="Escribe el título del libro">
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-warning" type="button" id="btn_buscar_isbn" onclick="buscarPorISBN()">
+                                <i class="fa fa-search"></i> Buscar por ISBN
+                            </button>
+                            <button class="btn btn-info" type="button" id="btn_buscar_titulo" style="display:none;" onclick="buscarPorTitulo()">
+                                <i class="fa fa-search"></i> Buscar por Título
+                            </button>
+                            <button class="btn btn-secondary" type="button" onclick="limpiarBusqueda()">
+                                <i class="fa fa-refresh"></i> Limpiar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="camara_container" style="display: none;">
+                            <video id="video" width="100%" autoplay></video>
+                            <canvas id="canvas" style="display: none;"></canvas>
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-primary" onclick="capturarCodigo()">Capturar</button>
+                                <button class="btn btn-sm btn-secondary" onclick="cerrarCamara()">Cerrar Cámara</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="resultado_busqueda" style="display: none;">
+                    <hr>
+                    <h6>Información del Libro Encontrado:</h6>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img id="portada_libro" src="" alt="Portada" class="img-fluid" style="max-width: 150px;">
+                        </div>
+                        <div class="col-md-9">
+                            <div class="form-group">
+                                <label>Título</label>
+                                <input type="text" class="form-control" id="titulo_encontrado" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Autor</label>
+                                <input type="text" class="form-control" id="autor_encontrado" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Editorial</label>
+                                <input type="text" class="form-control" id="editorial_encontrada" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Año de Publicación</label>
+                                <input type="text" class="form-control" id="anio_encontrado" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Descripción</label>
+                                <textarea class="form-control" id="descripcion_encontrada" rows="3" readonly></textarea>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-success" type="button" onclick="usarInformacionEncontrada()">
+                                    <i class="fa fa-check"></i> Usar esta información
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="sin_resultados" style="display: none;">
+                    <hr>
+                    <div class="alert alert-info">
+                        <i class="fa fa-info-circle"></i> No se encontró información para este libro. Puedes agregar el libro manualmente.
+                    </div>
+                </div>
             </div>
         </div>
     </div>

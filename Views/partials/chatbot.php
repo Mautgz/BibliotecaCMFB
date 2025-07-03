@@ -334,10 +334,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
         
-        // Limitar a 2 libros
-        const limitedBooks = books.slice(0, 2);
-        
-        limitedBooks.forEach(book => {
+        // Mostrar todos los libros devueltos por el backend
+        books.forEach(book => {
             const bookDiv = document.createElement('div');
             bookDiv.className = 'book-suggestion';
             bookDiv.innerHTML = `
