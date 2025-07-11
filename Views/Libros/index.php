@@ -49,7 +49,7 @@
 </div>
 
 <div id="nuevoLibro" class="modal fade" role="dialog" aria-labelledby="my-modal-title" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="title">Registro Libro</h5>
@@ -208,7 +208,7 @@
 
 <!-- Modal para escanear Libro (ISBN o Título) -->
 <div id="escanearLibro" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="my-modal-title" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header bg-warning text-white">
                 <h5 class="modal-title text-white" id="title">Escanear o Buscar Libro</h5>
