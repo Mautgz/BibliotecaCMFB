@@ -3,10 +3,6 @@ class Carousel extends Controller {
     public function __construct() {
         parent::__construct();
         session_start();
-        if (empty($_SESSION['activo'])) {
-            header('Location: ' . base_url);
-            die();
-        }
     }
 
     public function index() {
@@ -40,6 +36,10 @@ class Carousel extends Controller {
     }
 
     public function setCarouselItem() {
+        if (empty($_SESSION['activo'])) {
+            header('Location: ' . base_url);
+            die();
+        }
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $model = new CarouselModel();
             
@@ -121,6 +121,10 @@ class Carousel extends Controller {
     }
 
     public function delCarouselItem() {
+        if (empty($_SESSION['activo'])) {
+            header('Location: ' . base_url);
+            die();
+        }
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $model = new CarouselModel();
             $id = intval($_POST['id']);
@@ -130,6 +134,10 @@ class Carousel extends Controller {
     }
 
     public function updateOrder() {
+        if (empty($_SESSION['activo'])) {
+            header('Location: ' . base_url);
+            die();
+        }
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $model = new CarouselModel();
             $items = $_POST['items'];

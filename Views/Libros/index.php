@@ -27,7 +27,7 @@
                                 <th>Autor Personal</th>
                                 <th>Autor Corporativo</th>
                                 <th>Editorial</th>
-                                <th>Lugar</th>
+                                <th>Lugar de procedecia</th>
                                 <th>Número de Páginas</th>
                                 <th>Año Edición</th>
                                 <th>Cantidad</th>
@@ -87,7 +87,19 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="materia">Materia</label>
-                            <input id="materia" class="form-control" type="text" name="materia" placeholder="Materia">
+                            <select id="materia" class="form-control" name="materia" required>
+                                <option value="Generalidades">Generalidades</option>
+                                <option value="Filosofía y Psicología">Filosofía y Psicología</option>
+                                <option value="Religión">Religión</option>
+                                <option value="Ciencias Sociales">Ciencias Sociales</option>
+                                <option value="Lenguas">Lenguas</option>
+                                <option value="Ciencias Naturales y Matemáticas">Ciencias Naturales y Matemáticas</option>
+                                <option value="Tecnología (Ciencias aplicadas)">Tecnología (Ciencias aplicadas)</option>
+                                <option value="Artes y Recreación">Artes y Recreación</option>
+                                <option value="Literatura">Literatura</option>
+                                <option value="Historia y Geografía">Historia y Geografía</option>
+                                <option value="Otros">Otros</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -123,14 +135,18 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="ubicacion">Ubicación</label>
-                            <input id="ubicacion" class="form-control" type="text" name="ubicacion" placeholder="Ubicación">
+                            <input id="ubicacion" class="form-control" type="text" name="ubicacion" placeholder="Ubicación en el estante">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="lugar">Lugar</label>
-                            <input id="lugar" class="form-control" type="text" name="lugar" placeholder="Lugar">
+                            <input id="lugar" class="form-control" type="text" name="lugar" placeholder="Lugar de procedecia">
                         </div>
+                    </div>
+                    <div class="alert alert-warning p-2 mb-2" role="alert" style="font-size: 0.9em;margin-left: 5px;">
+                        <strong>Nota:</strong> La "Ubicación" se refiere a dónde se encuentra físicamente el libro en la biblioteca. AVISO: El campo 'Ubicación' debe tener el formato:<br>
+                         EN°X(estante),(A O B)-ESTE/OESTE,FILA N°x,IZQUIERDA O DERECHA -> por ejemplo:<strong> E1, A - OESTE, FILA 1, IZQUIERDA</strong>
                     </div>
                     <div class="col-md-8">
                             <div class="form-group">

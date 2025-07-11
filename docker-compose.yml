@@ -24,7 +24,7 @@ services:
     environment:
       - MYSQL_HOST=db
       - MYSQL_USER=root
-      - MYSQL_PASSWORD=your_password
+      - MYSQL_PASSWORD=""
       - MYSQL_DATABASE=biblioteca
     depends_on:
       - db

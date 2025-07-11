@@ -632,7 +632,7 @@ def buscar_libros_similares(libro_actual, books):
         for palabra_clave in palabras_clave_titulo:
             if palabra_clave in titulo_libro:
                 puntuacion += 2
-                
+            
         # Palabras clave del título en la materia del libro (+1 punto por palabra)
         for palabra_clave in palabras_clave_titulo:
             if palabra_clave in materia_libro:
@@ -979,15 +979,15 @@ def procesar_pregunta_ubicacion(query, books):
             
             if ubicaciones:
                 ubicaciones_unicas = list(set(ubicaciones))
-                return jsonify({
+            return jsonify({
                     'respuesta': f"Los libros sobre {tema} se encuentran en: {', '.join(ubicaciones_unicas)}.",
                     'libros': libros_tema
                 })
-            else:
-                return jsonify({
+        else:
+            return jsonify({
                     'respuesta': f"He encontrado libros sobre {tema}, pero no tengo información específica sobre su ubicación.",
-                    'libros': libros_tema
-                })
+                'libros': libros_tema
+            })
     
     return jsonify({
         'respuesta': "Lo siento, no pude encontrar información sobre la ubicación que buscas. ¿Podrías ser más específico?",

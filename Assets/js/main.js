@@ -22,9 +22,9 @@
 	$("[data-toggle='treeview.'].is-expanded").parent().toggleClass('is-expanded');
 
 	// Activar el menú lateral
-	$("[data-toggle='push-menu']").pushMenu();
+	//$("[data-toggle='push-menu']").pushMenu();
 
 	// Activar el control deslizante
-	$("[data-toggle='control-sidebar']").controlSidebar();
+	//$("[data-toggle='control-sidebar']").controlSidebar();
 
 })();

@@ -37,7 +37,7 @@ class Alumnos extends Controller
             $pdf->SetFont('Arial', 'B', 12);
             $pdf->Cell(260, 7, mb_convert_encoding($datos['nombre'], 'ISO-8859-1', 'UTF-8'), 0, 1, 'C');
 
-            // Logo 
+            // Logo
             $logo_path = $_SERVER['DOCUMENT_ROOT'] . '/biblio/Assets/img/logo.png';
             if (file_exists($logo_path)) {
                 $pdf->Image($logo_path, 240, 15, 30, 30, 'PNG');

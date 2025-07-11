@@ -1,5 +1,5 @@
 # Imagen base de PHP con Apache
-FROM php:8.0-apache
+FROM php:8.-apache
 
 # Instalar extensiones PHP necesarias
 RUN docker-php-ext-install pdo pdo_mysql mysqli
@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     git \
     && docker-php-ext-install zip
 
+RUN docker-php-ext-install pdo pdo_mysql gd 
 # Configurar el directorio de trabajo
 WORKDIR /var/www/html
 
