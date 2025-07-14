@@ -118,6 +118,52 @@
             background-color: #007bff;
             border-color: #007bff;
         }
+        
+        /* Estilos para paginación responsive */
+        .pagination-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -15px;
+            padding: 0 15px;
+        }
+        
+        .pagination {
+            flex-wrap: nowrap;
+            min-width: max-content;
+            margin: 0;
+        }
+        
+        .pagination .page-item {
+            margin: 0 2px;
+        }
+        
+        .pagination .page-link {
+            min-width: 40px;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        
+        @media (max-width: 768px) {
+            .pagination .page-link {
+                padding: 6px 8px;
+                font-size: 14px;
+                min-width: 35px;
+            }
+            
+            .pagination .page-item {
+                margin: 0 1px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .pagination .page-link {
+                padding: 5px 6px;
+                font-size: 12px;
+                min-width: 30px;
+            }
+        }
         .no-results {
             text-align: center;
             padding: 40px;
@@ -561,33 +607,35 @@
             <?php if ($data['total_pages'] > 1): ?>
                 <div class="row mt-4">
                     <div class="col-12">
-                        <nav aria-label="Navegación de páginas">
-                    <ul class="pagination justify-content-center">
-                                <?php if ($data['current_page'] > 1): ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<?php echo $data['current_page'] - 1; ?><?php echo !empty($data['filters']['title']) ? '&title=' . urlencode($data['filters']['title']) : ''; ?><?php echo !empty($data['filters']['author']) ? '&author=' . urlencode($data['filters']['author']) : ''; ?><?php echo !empty($data['filters']['dewey']) ? '&dewey=' . urlencode($data['filters']['dewey']) : ''; ?>">
-                                            Anterior
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
-                                
-                        <?php for ($i = 1; $i <= $data['total_pages']; $i++): ?>
-                                    <li class="page-item <?php echo $i === $data['current_page'] ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?page=<?php echo $i; ?><?php echo !empty($data['filters']['title']) ? '&title=' . urlencode($data['filters']['title']) : ''; ?><?php echo !empty($data['filters']['author']) ? '&author=' . urlencode($data['filters']['author']) : ''; ?><?php echo !empty($data['filters']['dewey']) ? '&dewey=' . urlencode($data['filters']['dewey']) : ''; ?>">
-                                            <?php echo $i; ?>
-                                        </a>
-                            </li>
-                        <?php endfor; ?>
-                                
-                                <?php if ($data['current_page'] < $data['total_pages']): ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<?php echo $data['current_page'] + 1; ?><?php echo !empty($data['filters']['title']) ? '&title=' . urlencode($data['filters']['title']) : ''; ?><?php echo !empty($data['filters']['author']) ? '&author=' . urlencode($data['filters']['author']) : ''; ?><?php echo !empty($data['filters']['dewey']) ? '&dewey=' . urlencode($data['filters']['dewey']) : ''; ?>">
-                                            Siguiente
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
-                    </ul>
-                </nav>
+                        <div class="pagination-container">
+                            <nav aria-label="Navegación de páginas">
+                                <ul class="pagination justify-content-center">
+                                    <?php if ($data['current_page'] > 1): ?>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<?php echo $data['current_page'] - 1; ?><?php echo !empty($data['filters']['title']) ? '&title=' . urlencode($data['filters']['title']) : ''; ?><?php echo !empty($data['filters']['author']) ? '&author=' . urlencode($data['filters']['author']) : ''; ?><?php echo !empty($data['filters']['dewey']) ? '&dewey=' . urlencode($data['filters']['dewey']) : ''; ?>">
+                                                Anterior
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+                                    
+                                    <?php for ($i = 1; $i <= $data['total_pages']; $i++): ?>
+                                        <li class="page-item <?php echo $i === $data['current_page'] ? 'active' : ''; ?>">
+                                            <a class="page-link" href="?page=<?php echo $i; ?><?php echo !empty($data['filters']['title']) ? '&title=' . urlencode($data['filters']['title']) : ''; ?><?php echo !empty($data['filters']['author']) ? '&author=' . urlencode($data['filters']['author']) : ''; ?><?php echo !empty($data['filters']['dewey']) ? '&dewey=' . urlencode($data['filters']['dewey']) : ''; ?>">
+                                                <?php echo $i; ?>
+                                            </a>
+                                        </li>
+                                    <?php endfor; ?>
+                                    
+                                    <?php if ($data['current_page'] < $data['total_pages']): ?>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<?php echo $data['current_page'] + 1; ?><?php echo !empty($data['filters']['title']) ? '&title=' . urlencode($data['filters']['title']) : ''; ?><?php echo !empty($data['filters']['author']) ? '&author=' . urlencode($data['filters']['author']) : ''; ?><?php echo !empty($data['filters']['dewey']) ? '&dewey=' . urlencode($data['filters']['dewey']) : ''; ?>">
+                                                Siguiente
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             <?php endif; ?>

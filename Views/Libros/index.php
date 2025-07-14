@@ -58,18 +58,21 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div class="alert alert-info p-2 mb-3" role="alert" style="font-size: 0.9em;">
+                    <strong>Campos obligatorios:</strong> Título, Autor Personal y Código de Libro. Los demás campos son opcionales.
+                </div>
                 <form id="frmLibro" class="row" onsubmit="registrarLibro(event)">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="titulo">Título</label>
+                            <label for="titulo">Título *</label>
                             <input type="hidden" id="id" name="id">
                             <input id="titulo" class="form-control" type="text" name="titulo" placeholder="Título del libro" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="autor_personal">Autor Personal</label>
-                            <input id="autor_personal" class="form-control" type="text" name="autor_personal" placeholder="Autor Personal">
+                            <label for="autor_personal">Autor Personal *</label>
+                            <input id="autor_personal" class="form-control" type="text" name="autor_personal" placeholder="Autor Personal" required>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -87,7 +90,8 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="materia">Materia</label>
-                            <select id="materia" class="form-control" name="materia" required>
+                            <select id="materia" class="form-control" name="materia">
+                                <option value="">Seleccione una materia</option>
                                 <option value="Generalidades">Generalidades</option>
                                 <option value="Filosofía y Psicología">Filosofía y Psicología</option>
                                 <option value="Religión">Religión</option>
@@ -128,7 +132,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="codigo_libro">Código Libro</label>
+                            <label for="codigo_libro">Código Libro *</label>
                             <input id="codigo_libro" class="form-control" type="text" name="codigo_libro" placeholder="Código Libro" required>
                         </div>
                     </div>

@@ -80,15 +80,17 @@
 
 <!-- Paginación -->
 <?php if ($data['total_pages'] > 1): ?>
-<nav aria-label="Paginación de libros">
-    <ul class="pagination justify-content-center">
-        <?php for ($i = 1; $i <= $data['total_pages']; $i++): ?>
-            <li class="page-item <?php echo ($i == $data['current_page']) ? 'active' : ''; ?>">
-                <a class="page-link" href="#" onclick="cambiarPagina(<?php echo $i; ?>); return false;"> <?php echo $i; ?> </a>
-            </li>
-        <?php endfor; ?>
-    </ul>
-</nav>
+<div class="pagination-container">
+    <nav aria-label="Paginación de libros">
+        <ul class="pagination justify-content-center">
+            <?php for ($i = 1; $i <= $data['total_pages']; $i++): ?>
+                <li class="page-item <?php echo ($i == $data['current_page']) ? 'active' : ''; ?>">
+                    <a class="page-link" href="#" onclick="cambiarPagina(<?php echo $i; ?>); return false;"> <?php echo $i; ?> </a>
+                </li>
+            <?php endfor; ?>
+        </ul>
+    </nav>
+</div>
 <?php endif; ?>
 
 <script>

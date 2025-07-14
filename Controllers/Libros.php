@@ -78,8 +78,8 @@ class Libros extends Controller
         $name = $img['name'];
         $fecha = date("YmdHis");
         $tmpName = $img['tmp_name'];
-        if (empty($titulo) || empty($codigo_libro)) {
-            $msg = array('msg' => 'El título y código de libro son requeridos', 'icono' => 'warning');
+        if (empty($titulo) || empty($autor_personal) || empty($codigo_libro)) {
+            $msg = array('msg' => 'El título, autor personal y código de libro son requeridos', 'icono' => 'warning');
         } else {
             if (!empty($name)) {
                 $extension = pathinfo($name, PATHINFO_EXTENSION);
